@@ -2,9 +2,8 @@
 
 The user authorized Phase 1–4 on 2026-10-24, with each phase independently tested,
 pushed, CI-verified and merged through a PR before the next phase advances.
-Phase 0 commit df80f80 passed CI #1 on Node 22/24. It is on origin/phase-0;
-GitHub API access is currently blocked by the cloud egress policy, so PR creation
-and merging remain outstanding. No direct-main push is used to bypass that gate.
+Phase 0 and Phase 1 were merged via PR #1 and #2 after Node 22/24 CI passed.
+GitHub API access was restored on 2026-10-24; no direct-main pushes were used.
 
 Phase 1: strict YAML; inspect without calls; explicit test allowlists; budgets,
 timeouts, cleanup and redaction; JSON Schema/Pointer assertions; console/JSON

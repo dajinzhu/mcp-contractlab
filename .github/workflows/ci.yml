@@ -33,6 +33,17 @@ jobs:
       - run: npm run test:smoke
       - run: npm run cli -- inspect -c examples/mcpcl.config.yaml --allow-exec
       - run: npm run cli -- test -c examples/mcpcl.config.yaml --allow-exec
+      - run: npm run cli -- snapshot -c examples/mcpcl.config.yaml --allow-exec --output /tmp/mcpcl-baseline.json
+      - run: npm run cli -- diff -c examples/mcpcl.config.yaml --allow-exec --baseline /tmp/mcpcl-baseline.json
+      - name: Verify removed tool compatibility gate exits 1
+        shell: bash
+        run: |
+          node --input-type=module -e 'import fs from "node:fs"; const s=JSON.parse(fs.readFileSync("/tmp/mcpcl-baseline.json","utf8")); s.tools.push({name:"previously-present",inputSchema:{type:"object"}}); fs.writeFileSync("/tmp/mcpcl-removed.json",JSON.stringify(s));'
+          set +e
+          npm run cli -- diff -c examples/mcpcl.config.yaml --allow-exec --baseline /tmp/mcpcl-removed.json
+          actual_status=$?
+          set -e
+          test "$actual_status" -eq 1
       - run: npm run demo -- --allow-exec
       - name: Verify three broken contracts exit 1
         shell: bash

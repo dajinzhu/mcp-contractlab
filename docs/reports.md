@@ -22,4 +22,6 @@ its output is redacted and contains input/output schemas and descriptions. Its
 console and JSON selections currently both use readable JSON for complete schema
 visibility. No tool is invoked. Diagnostic JSON is not a canonical baseline.
 
-No JUnit, snapshot or diff report is implemented in Phase 1.
+Diff JSON uses diffVersion 1, protocolVersion, exitCode and an ordered changes array.
+Each change contains tool, path, classification and reason. Snapshot format is
+documented in compatibility.md. JUnit remains a Phase 3 feature.
