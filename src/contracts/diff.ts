@@ -14,15 +14,33 @@ function object(value: unknown): Record<string, unknown> {
 }
 function types(value: unknown): string[] {
   const type = object(value).type;
-  return typeof type === 'string'
-    ? [type]
-    : Array.isArray(type) && type.every((t) => typeof t === 'string')
-      ? type
-      : [];
+  const values =
+    typeof type === 'string'
+      ? [type]
+      : Array.isArray(type) && type.length <= 7
+        ? type
+        : [];
+  return values.length &&
+    values.every((t) =>
+      [
+        'object',
+        'array',
+        'string',
+        'number',
+        'integer',
+        'boolean',
+        'null',
+      ].includes(t),
+    ) &&
+    new Set(values).size === values.length
+    ? values
+    : [];
 }
 function required(value: unknown): string[] {
   const r = object(value).required;
-  return Array.isArray(r) && r.every((t) => typeof t === 'string') ? r : [];
+  return Array.isArray(r) && r.every((t) => typeof t === 'string')
+    ? [...new Set(r)]
+    : [];
 }
 
 const annotations = new Set([
@@ -57,6 +75,48 @@ function composed(value: unknown): boolean {
         'unevaluatedItems',
       ].includes(key) || composed(child),
   );
+}
+function inhabitedSimpleRoot(schema: unknown): boolean {
+  if (schema === false) return false;
+  const root = object(schema),
+    rootTypes = types(schema);
+  if (root.type !== undefined && !rootTypes.length) return false;
+  if (rootTypes.length && !rootTypes.includes('object')) return false;
+  if (
+    !Object.keys(root).every(
+      (key) =>
+        annotations.has(key) ||
+        ['properties', 'required', 'additionalProperties'].includes(key),
+    )
+  )
+    return false;
+  const properties = object(root.properties);
+  return required(schema).every((key) => {
+    const property = Object.hasOwn(properties, key)
+      ? properties[key]
+      : (root.additionalProperties ?? true);
+    if (property === true) return true;
+    if (!property || typeof property !== 'object' || Array.isArray(property))
+      return false;
+    const definition = object(property);
+    if (!Object.keys(definition).every((key) => annotations.has(key)))
+      return false;
+    return (
+      definition.type === undefined ||
+      (types(property).length > 0 &&
+        types(property).every((type) =>
+          [
+            'object',
+            'array',
+            'string',
+            'number',
+            'integer',
+            'boolean',
+            'null',
+          ].includes(type),
+        ))
+    );
+  });
 }
 /** Deliberately incomplete: unproven schema changes are UNKNOWN, never safe. */
 export function compareSnapshots(before: Snapshot, after: Snapshot): Change[] {
@@ -99,14 +159,11 @@ export function compareSnapshots(before: Snapshot, after: Snapshot): Change[] {
       );
       continue;
     }
-    const added = required(b.inputSchema).filter(
-      (k) => !required(a.inputSchema).includes(k),
-    );
-    const simpleRequired = Object.keys(object(a.inputSchema)).every(
-      (key) =>
-        annotations.has(key) ||
-        ['properties', 'required', 'additionalProperties'].includes(key),
-    );
+    const oldRequired = new Set(required(a.inputSchema));
+    const added = required(b.inputSchema).filter((k) => !oldRequired.has(k));
+    // An object made of the old required fields must be a demonstrably valid
+    // old witness; otherwise the new root requirement is only UNKNOWN.
+    const simpleRequired = inhabitedSimpleRoot(a.inputSchema);
     const knownAdded = simpleRequired ? added : [];
     if (knownAdded.length)
       add('/inputSchema/required', 'BREAKING', 'New required input properties');

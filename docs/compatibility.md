@@ -55,3 +55,9 @@ integer with the same enum is UNKNOWN rather than a false definite break. Likewi
 adding root required [a] when allOf already requires a is UNKNOWN. Newly required
 properties are classified directly only for the supported simple root structure;
 other cases remain reviewable uncertainty. Strict mode may opt to fail these gates.
+
+For a new required-field proof, the old root must admit objects and its required
+properties must have demonstrably inhabited simple schemas. False schemas,
+non-object-only roots, constrained required values and invalid/oversized type unions
+remain UNKNOWN. Type unions are bounded to valid JSON primitive categories and
+required names use sets, avoiding quadratic comparisons on untrusted duplicates.

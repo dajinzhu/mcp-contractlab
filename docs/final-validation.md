@@ -6,11 +6,12 @@ remain distinct outstanding gates, not claimed completed by those merges.
 
 Final review found two false-definite schema classifications: number enum [1,2]
 becoming integer enum [1,2], and a root required property already enforced by allOf.
-Both now produce UNKNOWN; two regression tests cover them. Changed composed/ref
+Both now produce UNKNOWN; regression tests cover them, non-object/uninhabited old inputs and oversized invalid
+type unions. Changed composed/ref
 schemas are conservatively UNKNOWN and type proofs are limited to unconstrained
 old root types. No arbitrary JSON Schema proof is claimed.
 
-Local results after correction: 109 passed in 14 files, unit subset 62, smoke
+Local results after correction: 111 passed in 14 files, unit subset 64, smoke
 subset 47, plus 1 independent fixture test. Installed-tarball validation passed
 three good and three broken cases with correct exits. All installation/build/type/
 lint/format checks passed. The regenerated experiment remained TP 8, TN 8, FP 0,

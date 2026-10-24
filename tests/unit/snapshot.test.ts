@@ -25,6 +25,38 @@ it('does not mistake a repeated composed requirement for a provable new requirem
   ]);
 });
 
+it('does not claim added object requirements break non-object or uninhabited old inputs', () => {
+  for (const inputSchema of [
+    false,
+    { type: 'number' },
+    { type: 'object', required: ['a'], properties: { a: false } },
+  ]) {
+    const before = createSnapshot([{ name: 'sum', inputSchema }]);
+    const after = createSnapshot([
+      {
+        name: 'sum',
+        inputSchema:
+          typeof inputSchema === 'object'
+            ? { ...inputSchema, required: ['a', 'b'] }
+            : { type: 'object', required: ['b'] },
+      },
+    ]);
+    expect(
+      compareSnapshots(before, after).map((c) => c.classification),
+    ).toEqual(['UNKNOWN']);
+  }
+});
+
+it('treats oversized or invalid type unions as unknown without quadratic type comparisons', () => {
+  const before = createSnapshot([
+    tool({ type: Array(10000).fill('not-a-json-type') }),
+  ]);
+  const after = createSnapshot([tool({ type: 'object', required: ['a'] })]);
+  expect(compareSnapshots(before, after).map((c) => c.classification)).toEqual([
+    'UNKNOWN',
+  ]);
+});
+
 const tool = (
   inputSchema: object = {
     type: 'object',
