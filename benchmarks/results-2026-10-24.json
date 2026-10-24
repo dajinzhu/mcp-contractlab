@@ -3,7 +3,7 @@
   "fixtureSha256": "43468294f313dfe53c3f0f7d445cc385823ab66421bb77c9995b074ea16c639b",
   "benchmarkScriptSha256": "2a234af1dcfdb004ef196fd53747626eafc69aed1157274b50e1e7ae098591aa",
   "independentLockfileSha256": "f9f5cb18699a13e1a831ea85eabc13ed06b516a54f5d9d3915da04fc2f7609ee",
-  "sourceSha256": "15b824dbcaabce1e8f38c9ddff5654f6bd320aab10f5fb76c0abe1d5e0710049",
+  "sourceSha256": "6e9340c33feb8e5d49b09d4ee942cf5e9503d496d767a1e3592af6aadf26314f",
   "node": "v24.19.0",
   "platform": "linux",
   "arch": "x64",
@@ -33,7 +33,7 @@
       "fixture": "local synthetic behavioral mutation",
       "expectedFault": false,
       "actualExit": 0,
-      "durationMs": 600.64
+      "durationMs": 638.22
     },
     {
       "case": "array control",
@@ -41,7 +41,7 @@
       "fixture": "local synthetic behavioral mutation",
       "expectedFault": false,
       "actualExit": 0,
-      "durationMs": 623.88
+      "durationMs": 610.34
     },
     {
       "case": "null control",
@@ -49,7 +49,7 @@
       "fixture": "local synthetic behavioral mutation",
       "expectedFault": false,
       "actualExit": 0,
-      "durationMs": 585.26
+      "durationMs": 599.92
     },
     {
       "case": "wrong numeric value mutation",
@@ -57,7 +57,7 @@
       "fixture": "local synthetic behavioral mutation",
       "expectedFault": true,
       "actualExit": 1,
-      "durationMs": 595.33
+      "durationMs": 617.29
     },
     {
       "case": "wrong output type mutation",
@@ -65,7 +65,7 @@
       "fixture": "local synthetic behavioral mutation",
       "expectedFault": true,
       "actualExit": 1,
-      "durationMs": 593.67
+      "durationMs": 670.07
     },
     {
       "case": "missing structured output mutation",
@@ -73,7 +73,7 @@
       "fixture": "local synthetic behavioral mutation",
       "expectedFault": true,
       "actualExit": 1,
-      "durationMs": 531.32
+      "durationMs": 510.12
     },
     {
       "case": "unexpected tool error mutation",
@@ -81,7 +81,7 @@
       "fixture": "local synthetic behavioral mutation",
       "expectedFault": true,
       "actualExit": 1,
-      "durationMs": 565.61
+      "durationMs": 498.46
     },
     {
       "case": "independent Everything echo control",
@@ -89,7 +89,7 @@
       "fixture": "@modelcontextprotocol/server-everything@2.0.0",
       "expectedFault": false,
       "actualExit": 0,
-      "durationMs": 557.53
+      "durationMs": 571.14
     },
     {
       "case": "sum control",
@@ -97,7 +97,7 @@
       "fixture": "local synthetic behavioral mutation",
       "expectedFault": false,
       "actualExit": 0,
-      "durationMs": 607.99
+      "durationMs": 625.46
     },
     {
       "case": "array control",
@@ -105,7 +105,7 @@
       "fixture": "local synthetic behavioral mutation",
       "expectedFault": false,
       "actualExit": 0,
-      "durationMs": 611.14
+      "durationMs": 606.35
     },
     {
       "case": "null control",
@@ -113,7 +113,7 @@
       "fixture": "local synthetic behavioral mutation",
       "expectedFault": false,
       "actualExit": 0,
-      "durationMs": 663.48
+      "durationMs": 650.13
     },
     {
       "case": "wrong numeric value mutation",
@@ -121,7 +121,7 @@
       "fixture": "local synthetic behavioral mutation",
       "expectedFault": true,
       "actualExit": 1,
-      "durationMs": 639.39
+      "durationMs": 595.21
     },
     {
       "case": "wrong output type mutation",
@@ -129,7 +129,7 @@
       "fixture": "local synthetic behavioral mutation",
       "expectedFault": true,
       "actualExit": 1,
-      "durationMs": 633.56
+      "durationMs": 682.19
     },
     {
       "case": "missing structured output mutation",
@@ -137,7 +137,7 @@
       "fixture": "local synthetic behavioral mutation",
       "expectedFault": true,
       "actualExit": 1,
-      "durationMs": 512.58
+      "durationMs": 543.1
     },
     {
       "case": "unexpected tool error mutation",
@@ -145,7 +145,7 @@
       "fixture": "local synthetic behavioral mutation",
       "expectedFault": true,
       "actualExit": 1,
-      "durationMs": 519.17
+      "durationMs": 514.03
     },
     {
       "case": "independent Everything echo control",
@@ -153,7 +153,7 @@
       "fixture": "@modelcontextprotocol/server-everything@2.0.0",
       "expectedFault": false,
       "actualExit": 0,
-      "durationMs": 585.23
+      "durationMs": 579.4
     }
   ]
 }

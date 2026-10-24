@@ -6,6 +6,25 @@ import {
 } from '../../src/contracts/snapshot.js';
 import { compareSnapshots } from '../../src/contracts/diff.js';
 
+it('does not falsely call type narrowing breaking when old constraints already imply the new type', () => {
+  const before = createSnapshot([tool({ type: 'number', enum: [1, 2] })]);
+  const after = createSnapshot([tool({ type: 'integer', enum: [1, 2] })]);
+  expect(compareSnapshots(before, after).map((c) => c.classification)).toEqual([
+    'UNKNOWN',
+  ]);
+});
+it('does not mistake a repeated composed requirement for a provable new requirement', () => {
+  const before = createSnapshot([
+    tool({ type: 'object', allOf: [{ required: ['a'] }] }),
+  ]);
+  const after = createSnapshot([
+    tool({ type: 'object', allOf: [{ required: ['a'] }], required: ['a'] }),
+  ]);
+  expect(compareSnapshots(before, after).map((c) => c.classification)).toEqual([
+    'UNKNOWN',
+  ]);
+});
+
 const tool = (
   inputSchema: object = {
     type: 'object',
