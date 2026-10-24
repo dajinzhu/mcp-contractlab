@@ -150,6 +150,13 @@ it('discovers tools and schemas with zero tool invocations', async () => {
   expect(JSON.parse(result.stdout).tools).toHaveLength(11);
   expect(result.log).not.toContain('CALL');
 });
+
+it('rejects a zero-case test run instead of reporting a false success', async () => {
+  const result = await run([]);
+  expect(result.code).toBe(2);
+  expect(result.log).toBe('');
+  expect(result.report?.errors.join(' ')).toContain('No test cases');
+});
 it.each([
   { allow: false },
   { safety: { allowToolCalls: [] } },

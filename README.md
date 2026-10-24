@@ -53,8 +53,7 @@ Format keywords are annotations, not additional format assertions. Tool error
 results (`isError`) are distinct from protocol/transport failures.
 
 Exit codes: **0** success; **1** contract failure; **2** invalid config, launch,
-transport, timeout or interruption; **3** safety blocked. Empty suites report zero
-checks and do not constitute acceptance evidence. Reports count passed, failed,
+transport, timeout or interruption; **3** safety blocked. Empty test suites exit 2 before launch, so zero checks cannot pass a CI gate. Reports count passed, failed,
 blocked and unrun cases. A transport failure stops subsequent calls.
 
 These permissions do not sandbox configured programs or external side effects.

@@ -13,7 +13,7 @@ and expectation where applicable. Timing and timestamps are excluded for stabili
 
 A safety failure blocks the entire suite (exit 3). Configuration, launch, protocol,
 transport, timeout and interruption failures exit 2. Contract failures exit 1;
-complete success exits 0. A failed request stops further calls; remaining cases
+complete success exits 0. An empty test suite exits 2 before process launch. A failed request stops further calls; remaining cases
 are unrun. Explicit `isError: true` can satisfy a case expecting that result, while
 transport errors cannot. Output schemas apply to successful tool results.
 

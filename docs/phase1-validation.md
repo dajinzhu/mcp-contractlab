@@ -4,9 +4,9 @@ Validated on 2026-10-24 using Node 24.19.0 and npm 11.9.0 on CPU-only Linux.
 
 - `npm ci`: passed, 146 packages installed from the committed lockfile.
 - `npm run build`, `npm run typecheck`, `npm run lint`, `npm run format:check`: passed.
-- `npm test`: 5 files, 50 passed, no failures or skipped tests.
+- `npm test`: 5 files, 51 passed, no failures or skipped tests.
 - `npm run test:unit`: 2 files, 20 passed (a subset of the full suite).
-- `npm run test:smoke`: 3 files, 30 passed (a subset of the full suite).
+- `npm run test:smoke`: 3 files, 31 passed (a subset of the full suite).
 - README help, inspect, JSON-file output and three-case passing suite: executed successfully.
 - Three-case broken example: all three failed with pointer/expected/actual diagnostics,
   actual exit 1. Unconsented CLI suite: three blocked cases, actual exit 3.
@@ -15,6 +15,8 @@ Validated on 2026-10-24 using Node 24.19.0 and npm 11.9.0 on CPU-only Linux.
 - Tests verify zero discovery calls, all-suite safety preflight, input prevalidation,
   unknown tools, missing/wrong output, tool errors, null/array outputs, redaction,
   request timeout, crash, stderr overflow, SIGINT cleanup and schema-worker deadlines.
+- Final review identified zero-case test runs returning success. They now exit 2
+  before launch, with a real subprocess regression test.
 - Initial lint found two throws in a finally block and two redundant initializations.
   Cleanup was extracted and initializations corrected; subsequent lint passed.
 - No destructive tools, production servers, model APIs, databases or remote MCP

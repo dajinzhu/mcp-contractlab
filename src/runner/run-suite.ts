@@ -74,6 +74,11 @@ export async function runSuite(
       'Safety preflight blocked execution; no tools were called',
     ]);
   }
+  if (config.cases.length === 0) {
+    return makeReport(results, 2, [
+      'No test cases configured; no tools were called',
+    ]);
+  }
   try {
     return await withSession(config, signal, async (client, signal) => {
       const tools = await discover(client, config, signal);
