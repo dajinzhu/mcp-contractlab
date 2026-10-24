@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.npm/
+coverage/
+package-lock.json
+CODEX_BUILD_PLAN.md
