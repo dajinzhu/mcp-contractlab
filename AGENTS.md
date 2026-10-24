@@ -1,16 +1,17 @@
 # Engineering rules
 
 Read CODEX_BUILD_PLAN.md fully before changing phase scope. Implement only the
-phase the user authorized. This repository currently implements Phase 0: the
-development scaffold and a local SDK smoke fixture. Do not start Phase 1 without
-explicit authorization, even after Phase 0 checks pass.
+phase the user authorized. The user authorized the Phase 1–4 roadmap after Phase 0 CI passed.
+Implement and validate each phase independently; advance only after its CI passes.
+Create phase PRs and merge after successful CI when existing permissions permit.
+Public npm publication and external outreach still require specific confirmation.
 
 - Use strict TypeScript, npm and the committed lockfile; Node.js >=22.13.0.
 - Use official split MCP v2 packages; never substitute `@modelcontextprotocol/sdk`.
 - Pin the client to MCP `2026-07-28` using the SDK's version-negotiation API.
   Its default is legacy. Do not implement handshakes or wire framing yourself.
-- Only start the known local example when running tests or when the demo receives
-  `--allow-exec`. Never auto-call discovered tools or trust annotations for consent.
+- CLI subprocess launch requires `--allow-exec`. Tool calls require explicit cases
+  and the configured allowlist. Never auto-call discovered tools or trust annotations.
 - Launch with argument arrays and `shell: false` (the SDK stdio transport does so).
 - Bound requests and buffers. Close child transports in `finally`, including failure
   and interruption paths. Never print environments, raw stderr or secret data.
