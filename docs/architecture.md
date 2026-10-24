@@ -1,6 +1,6 @@
-# Current architecture: Phase 1
+# Current architecture: beta engineering
 
-The CLI loads strict version-1 YAML, preflights safety, discovers tools through the
+The CLI loads strict version-1 YAML (including explicit parameter rows), preflights safety, discovers tools through the
 pinned modern official SDK client, validates every input, then invokes only the
 explicit cases sequentially. Schema checks run in resource-limited workers;
 JSON Pointer assertions compare raw data. Reports redact only after comparison.
@@ -8,7 +8,13 @@ The official SDK request API carries tools/call; using it directly lets the runn
 apply output validation in workers instead of synchronous SDK/Ajv validation.
 No wire framing, manual initialization, retries or protocol sessions are implemented.
 
-See configuration.md, security.md and reports.md for implemented contracts.
+Canonical snapshots and conservative diff never call tools or modify baselines
+implicitly. Console/JSON/JUnit share redaction and exit semantics. Streamable HTTP
+uses the same pinned protocol with exact-endpoint consent, DNS/IP checks and a
+pinned TLS connector. Coverage is limited to completed tools and explicit root
+property enum choices; unmeasured behavior is stated. Independent fixture and
+installed-tarball checks exercise the distribution separately from source tests.
+See configuration.md, security.md, reports.md and research.md for implemented contracts.
 Phase 0 research below is retained as historical evidence, not current scope.
 
 # Phase 0 architecture and specification findings

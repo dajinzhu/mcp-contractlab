@@ -1,0 +1,29 @@
+schemaVersion: 1
+server:
+  name: parameterized-sum
+  transport: stdio
+  command: node
+  args: [dist/examples/servers/echo-server.js]
+  cwd: ..
+safety:
+  allowToolCalls: [sum]
+  maxToolCalls: 3
+cases:
+  - id: sum-table
+    tool: sum
+    rows:
+      - id: positive
+        arguments: { a: 2, b: 3 }
+        expect:
+          assertions:
+            - { path: /structuredContent/value, operator: equals, value: 5 }
+      - id: zero
+        arguments: { a: 0, b: 0 }
+        expect:
+          assertions:
+            - { path: /structuredContent/value, operator: equals, value: 0 }
+      - id: negative
+        arguments: { a: -4, b: 1 }
+        expect:
+          assertions:
+            - { path: /structuredContent/value, operator: equals, value: -3 }

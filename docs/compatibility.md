@@ -31,3 +31,16 @@ Snapshots cannot substitute for the behavioral suite.
 
 Only 2026-07-28 is supported. Older protocol revisions are unverified and rejected;
 there is no implicit legacy initialize fallback.
+
+## Measured protocol matrix
+
+| Client                       | Fixture                                              | Observation                                  |
+| ---------------------------- | ---------------------------------------------------- | -------------------------------------------- |
+| CLI pinned 2026-07-28        | Modern stdio fixture                                 | Discovery/call succeeds                      |
+| CLI pinned 2026-07-28        | Modern HTTP SDK handler via injected network adapter | Discovery/call succeeds; no legacy handshake |
+| SDK legacy client 2025-11-25 | Modern-only stdio fixture                            | Rejected before any tool call                |
+| SDK legacy client 2025-06-18 | Modern-only stdio fixture                            | Rejected before any tool call                |
+
+The negative legacy clients exist only in compatibility tests. The product does
+not offer these revisions or silently fall back; legacy-server interoperability
+and public-host HTTP/TLS integration remain unverified.

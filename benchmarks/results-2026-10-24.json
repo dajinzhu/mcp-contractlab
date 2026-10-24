@@ -1,0 +1,159 @@
+{
+  "benchmarkVersion": 1,
+  "fixtureSha256": "43468294f313dfe53c3f0f7d445cc385823ab66421bb77c9995b074ea16c639b",
+  "benchmarkScriptSha256": "2a234af1dcfdb004ef196fd53747626eafc69aed1157274b50e1e7ae098591aa",
+  "independentLockfileSha256": "f9f5cb18699a13e1a831ea85eabc13ed06b516a54f5d9d3915da04fc2f7609ee",
+  "sourceSha256": "15b824dbcaabce1e8f38c9ddff5654f6bd320aab10f5fb76c0abe1d5e0710049",
+  "node": "v24.19.0",
+  "platform": "linux",
+  "arch": "x64",
+  "cpuModel": "AMD EPYC 9V74 80-Core Processor",
+  "availableParallelism": 4,
+  "lockfileSha256": "3e3721a4b285be227b02053f344993c284fa64f4aa3f1678f7bbe8b3bc5ca19f",
+  "protocolVersion": "2026-07-28",
+  "repetitions": 2,
+  "metrics": {
+    "truePositive": 8,
+    "trueNegative": 8,
+    "falsePositive": 0,
+    "falseNegative": 0,
+    "precision": 1,
+    "recall": 1
+  },
+  "limitations": [
+    "Small deterministic dataset, not real-world accuracy or a competitor comparison.",
+    "Only the echo control uses an independent public fixture; faults are explicit local synthetic behaviors.",
+    "Duration includes CLI startup, schema workers, server launch and cleanup; no isolated runner-overhead claim.",
+    "Repeated samples are not independent real-world incidents."
+  ],
+  "observations": [
+    {
+      "case": "sum control",
+      "repetition": 0,
+      "fixture": "local synthetic behavioral mutation",
+      "expectedFault": false,
+      "actualExit": 0,
+      "durationMs": 600.64
+    },
+    {
+      "case": "array control",
+      "repetition": 0,
+      "fixture": "local synthetic behavioral mutation",
+      "expectedFault": false,
+      "actualExit": 0,
+      "durationMs": 623.88
+    },
+    {
+      "case": "null control",
+      "repetition": 0,
+      "fixture": "local synthetic behavioral mutation",
+      "expectedFault": false,
+      "actualExit": 0,
+      "durationMs": 585.26
+    },
+    {
+      "case": "wrong numeric value mutation",
+      "repetition": 0,
+      "fixture": "local synthetic behavioral mutation",
+      "expectedFault": true,
+      "actualExit": 1,
+      "durationMs": 595.33
+    },
+    {
+      "case": "wrong output type mutation",
+      "repetition": 0,
+      "fixture": "local synthetic behavioral mutation",
+      "expectedFault": true,
+      "actualExit": 1,
+      "durationMs": 593.67
+    },
+    {
+      "case": "missing structured output mutation",
+      "repetition": 0,
+      "fixture": "local synthetic behavioral mutation",
+      "expectedFault": true,
+      "actualExit": 1,
+      "durationMs": 531.32
+    },
+    {
+      "case": "unexpected tool error mutation",
+      "repetition": 0,
+      "fixture": "local synthetic behavioral mutation",
+      "expectedFault": true,
+      "actualExit": 1,
+      "durationMs": 565.61
+    },
+    {
+      "case": "independent Everything echo control",
+      "repetition": 0,
+      "fixture": "@modelcontextprotocol/server-everything@2.0.0",
+      "expectedFault": false,
+      "actualExit": 0,
+      "durationMs": 557.53
+    },
+    {
+      "case": "sum control",
+      "repetition": 1,
+      "fixture": "local synthetic behavioral mutation",
+      "expectedFault": false,
+      "actualExit": 0,
+      "durationMs": 607.99
+    },
+    {
+      "case": "array control",
+      "repetition": 1,
+      "fixture": "local synthetic behavioral mutation",
+      "expectedFault": false,
+      "actualExit": 0,
+      "durationMs": 611.14
+    },
+    {
+      "case": "null control",
+      "repetition": 1,
+      "fixture": "local synthetic behavioral mutation",
+      "expectedFault": false,
+      "actualExit": 0,
+      "durationMs": 663.48
+    },
+    {
+      "case": "wrong numeric value mutation",
+      "repetition": 1,
+      "fixture": "local synthetic behavioral mutation",
+      "expectedFault": true,
+      "actualExit": 1,
+      "durationMs": 639.39
+    },
+    {
+      "case": "wrong output type mutation",
+      "repetition": 1,
+      "fixture": "local synthetic behavioral mutation",
+      "expectedFault": true,
+      "actualExit": 1,
+      "durationMs": 633.56
+    },
+    {
+      "case": "missing structured output mutation",
+      "repetition": 1,
+      "fixture": "local synthetic behavioral mutation",
+      "expectedFault": true,
+      "actualExit": 1,
+      "durationMs": 512.58
+    },
+    {
+      "case": "unexpected tool error mutation",
+      "repetition": 1,
+      "fixture": "local synthetic behavioral mutation",
+      "expectedFault": true,
+      "actualExit": 1,
+      "durationMs": 519.17
+    },
+    {
+      "case": "independent Everything echo control",
+      "repetition": 1,
+      "fixture": "@modelcontextprotocol/server-everything@2.0.0",
+      "expectedFault": false,
+      "actualExit": 0,
+      "durationMs": 585.23
+    }
+  ]
+}

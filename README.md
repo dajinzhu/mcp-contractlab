@@ -2,8 +2,8 @@
 
 Test your MCP tools before your agents trust them.
 
-An independent MIT-licensed MCP behavior-contract test runner. Phase 3 implements
-explicit stdio inspection, behavior tests, conservative interface gates and JUnit reporting using official MCP SDK v2.4.0,
+An independent MIT-licensed MCP behavior-contract test runner. The beta implements
+explicit stdio inspection, behavior tests, conservative interface gates, JUnit and guarded Streamable HTTP using official MCP SDK v2.4.0,
 protocol **2026-07-28**. Not production-ready. Legacy protocol revisions are not
 verified; no LLM, GPU, database, account or external MCP service is needed.
 
@@ -82,7 +82,7 @@ See [configuration](docs/configuration.md), [report format](docs/reports.md),
 [contributing](CONTRIBUTING.md), [agent rules](AGENTS.md), and
 [the original build plan](CODEX_BUILD_PLAN.md).
 
-Phase 4 HTTP/coverage is not implemented yet. The npm package remains private and unpublished.
+Parameterized cases and explicitly limited coverage are also available. The npm package remains private and unpublished.
 
 ## Interface baselines
 
@@ -118,3 +118,39 @@ The main CLI remains tested on Node 22/24. The independently maintained Everythi
 server 2.0.0 requires Node 24 and has its own pinned fixture lockfile. Only its
 side-effect-free echo tool is authorized. These checks are additional, not silently
 skipped tests in the main suite. See [release preparation](docs/releasing.md).
+
+## Parameterized cases and coverage
+
+```sh
+npm run cli -- test -c examples/mcpcl.parameterized.yaml --allow-exec --report json
+```
+
+Each table row supplies its own ID, arguments and expectation. Expansion preserves
+order and enforces the same allowlist and total invocation budget. JSON reports
+identify advertised, attempted, completed and untested tools. Only direct root
+property enums (at most 32 values) have measured value-branch observations;
+compositions, nested constraints and general behavioral coverage are unmeasured.
+
+## Reviewed HTTPS endpoints
+
+Use `transport: streamable-http`, an exact `server.url` and explicit
+`safety.allowedHttpHosts`; then supply `--allow-http` instead of `--allow-exec`.
+The HTTP example contains a reserved placeholder host and must be edited before
+use. Optional bearer credentials come only from the named `server.authEnv` variable.
+Private/local/metadata addresses, mixed DNS answers, credentials in URLs, query
+strings, fragments, off-endpoint requests and redirects are blocked. DNS answers
+are checked once and pinned to the TLS connector. OAuth is not implemented.
+See [HTTP security and boundaries](docs/security.md).
+
+## Reproducible evidence
+
+On Node 24, after building and installing the independent fixture:
+
+```sh
+npm run benchmark -- --output /tmp/mcpcl-benchmark.json
+```
+
+See [methodology and limitations](docs/research.md) and the checked-in raw results.
+This is a small deterministic experiment, not real-world accuracy or superiority
+against competing tools. External user feedback and public npm publication remain
+pending; the project is not production-ready.

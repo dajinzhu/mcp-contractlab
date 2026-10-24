@@ -12,9 +12,11 @@ const config = {
 };
 describe('strict configuration', () => {
   it('resolves paths against the config directory', () => {
-    expect(
-      parseConfig(JSON.stringify(config), '/tmp/unit/config.yaml').server.cwd,
-    ).toBe('/tmp/unit');
+    const server = parseConfig(
+      JSON.stringify(config),
+      '/tmp/unit/config.yaml',
+    ).server;
+    expect(server.transport === 'stdio' && server.cwd).toBe('/tmp/unit');
   });
   it.each([
     { ...config, typo: true },

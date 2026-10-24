@@ -46,26 +46,50 @@ const testCase = z.strictObject({
     assertions: z.array(assertion).max(100).default([]),
   }),
 });
+const parameterized = z.strictObject({
+  id: z.string().min(1).max(128),
+  tool: z.string().min(1).max(256),
+  rows: z
+    .array(testCase.omit({ tool: true }))
+    .min(1)
+    .max(1000),
+});
 const schema = z.strictObject({
   schemaVersion: z.literal(1),
-  server: z.strictObject({
-    name: z.string().min(1).max(128),
-    transport: z.literal('stdio'),
-    command: z.string().min(1).max(4096),
-    args: z.array(z.string().max(4096)).max(100).default([]),
-    cwd: z.string().default('.'),
-    timeoutMs: positive.default(10_000),
-    env: z
-      .array(z.string().regex(/^[A-Za-z_][A-Za-z0-9_]*$/))
-      .max(100)
-      .default([]),
-  }),
+  server: z.discriminatedUnion('transport', [
+    z.strictObject({
+      name: z.string().min(1).max(128),
+      transport: z.literal('stdio'),
+      command: z.string().min(1).max(4096),
+      args: z.array(z.string().max(4096)).max(100).default([]),
+      cwd: z.string().default('.'),
+      timeoutMs: positive.default(10_000),
+      env: z
+        .array(z.string().regex(/^[A-Za-z_][A-Za-z0-9_]*$/))
+        .max(100)
+        .default([]),
+    }),
+    z.strictObject({
+      name: z.string().min(1).max(128),
+      transport: z.literal('streamable-http'),
+      url: z.url().max(4096),
+      timeoutMs: positive.default(10_000),
+      authEnv: z
+        .string()
+        .regex(/^[A-Za-z_][A-Za-z0-9_]*$/)
+        .optional(),
+    }),
+  ]),
   safety: z.strictObject({
     allowToolCalls: z.array(z.string().min(1)).max(1000),
     maxToolCalls: z.number().int().min(0).max(1000).default(10),
     toolTimeoutMs: positive.default(5000),
+    allowedHttpHosts: z.array(z.string().min(1).max(253)).max(100).default([]),
   }),
-  cases: z.array(testCase).max(1000).default([]),
+  cases: z
+    .array(z.union([testCase, parameterized]))
+    .max(1000)
+    .default([]),
 });
 
 export function parseConfig(source: string, filename: string): Config {
@@ -102,8 +126,22 @@ export function parseConfig(source: string, filename: string): Config {
   const config = parsed.data;
   if (new Set(config.cases.map((c) => c.id)).size !== config.cases.length)
     throw new Failure(2, 'Case IDs must be unique');
-  config.server.cwd = resolve(dirname(resolve(filename)), config.server.cwd);
-  return config;
+  const cases = config.cases.flatMap((c) =>
+    'rows' in c
+      ? c.rows.map((row) => ({ ...row, id: `${c.id}/${row.id}`, tool: c.tool }))
+      : [c],
+  );
+  if (
+    cases.length > 1000 ||
+    new Set(cases.map((c) => c.id)).size !== cases.length
+  )
+    throw new Failure(
+      2,
+      'Expanded case IDs must be unique and count at most 1000',
+    );
+  if (config.server.transport === 'stdio')
+    config.server.cwd = resolve(dirname(resolve(filename)), config.server.cwd);
+  return { ...config, cases };
 }
 
 export async function loadConfig(filename: string): Promise<Config> {

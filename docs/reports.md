@@ -29,3 +29,17 @@ Passed cases have empty testcase elements, contract failures have failure elemen
 transport failures have error elements, and blocked/unrun cases are skipped. If a
 nonzero run has no failed testcase, a synthetic run-status error prevents a false
 all-green XML report. The CLI exit code is never changed by the chosen format.
+
+## Coverage (additive report-v1 metadata)
+
+`coverage.discoveryComplete` states whether the tool list is known. The sorted
+`advertisedTools`, `attemptedTools`, `completedTools`, and `untestedTools` lists
+separate request attempts from completed calls. Failed assertions can still count
+as completed calls. A timed-out attempt does not prove completion.
+
+`enumBranches` contains tool name, root property JSON Pointer, total enum choices,
+and observed numeric indices. Enum values themselves are not emitted. Only direct
+root property enums with at most 32 choices are measured; refs, compositions,
+nested constraints, optionality and arbitrary behavior remain unmeasured and are
+listed in `limitations`. This is not a general JSON Schema or semantic coverage
+percentage. A blocked run cannot fabricate discovered or completed tools.

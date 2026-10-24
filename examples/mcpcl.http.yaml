@@ -1,0 +1,12 @@
+schemaVersion: 1
+server:
+  name: replace-with-your-reviewed-server
+  transport: streamable-http
+  url: https://mcp.example/mcp
+  timeoutMs: 10000
+  # Optional: authEnv: MCPCL_HTTP_BEARER
+safety:
+  allowedHttpHosts: [mcp.example]
+  allowToolCalls: []
+  maxToolCalls: 0
+cases: []

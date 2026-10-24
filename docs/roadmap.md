@@ -2,7 +2,7 @@
 
 The user authorized Phase 1–4 on 2026-10-24, with each phase independently tested,
 pushed, CI-verified and merged through a PR before the next phase advances.
-Phase 0, Phase 1 and Phase 2 were merged via PR #1, #2 and #3 after Node 22/24 CI passed.
+Phase 0–3 were merged via PR #1–#4 after Node 22/24 CI passed.
 GitHub API access was restored on 2026-10-24; no direct-main pushes were used.
 
 Phase 1: strict YAML; inspect without calls; explicit test allowlists; budgets,

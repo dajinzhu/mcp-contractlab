@@ -20,19 +20,28 @@ export interface Case {
 }
 export interface Config {
   schemaVersion: 1;
-  server: {
-    name: string;
-    transport: 'stdio';
-    command: string;
-    args: string[];
-    cwd: string;
-    timeoutMs: number;
-    env: string[];
-  };
+  server:
+    | {
+        name: string;
+        transport: 'stdio';
+        command: string;
+        args: string[];
+        cwd: string;
+        timeoutMs: number;
+        env: string[];
+      }
+    | {
+        name: string;
+        transport: 'streamable-http';
+        url: string;
+        timeoutMs: number;
+        authEnv?: string | undefined;
+      };
   safety: {
     allowToolCalls: string[];
     maxToolCalls: number;
     toolTimeoutMs: number;
+    allowedHttpHosts?: string[];
   };
   cases: Case[];
 }
@@ -49,4 +58,18 @@ export interface Report {
   cases: CaseResult[];
   counts: Record<CaseResult['status'], number>;
   errors: string[];
+  coverage?: {
+    discoveryComplete: boolean;
+    advertisedTools: string[];
+    attemptedTools: string[];
+    completedTools: string[];
+    untestedTools: string[];
+    enumBranches: {
+      tool: string;
+      path: string;
+      total: number;
+      observed: number[];
+    }[];
+    limitations: string[];
+  };
 }
