@@ -2,8 +2,8 @@
 
 Test your MCP tools before your agents trust them.
 
-An independent MIT-licensed MCP behavior-contract test runner. Phase 1 implements
-explicit stdio tool inspection and behavior tests using official MCP SDK v2.4.0,
+An independent MIT-licensed MCP behavior-contract test runner. Phase 2 implements
+explicit stdio inspection, behavior tests and conservative interface gates using official MCP SDK v2.4.0,
 protocol **2026-07-28**. Not production-ready. Legacy protocol revisions are not
 verified; no LLM, GPU, database, account or external MCP service is needed.
 
@@ -82,5 +82,17 @@ See [configuration](docs/configuration.md), [report format](docs/reports.md),
 [contributing](CONTRIBUTING.md), [agent rules](AGENTS.md), and
 [the original build plan](CODEX_BUILD_PLAN.md).
 
-Phase 2 snapshots/diff, Phase 3 JUnit/distribution, and Phase 4 HTTP/coverage are
-not implemented yet. The npm package remains private and unpublished.
+Phase 3 JUnit/distribution and Phase 4 HTTP/coverage are not implemented yet. The npm package remains private and unpublished.
+
+## Interface baselines
+
+```sh
+npm run cli -- snapshot -c examples/mcpcl.config.yaml --allow-exec --output /tmp/mcpcl-baseline.json
+npm run cli -- diff -c examples/mcpcl.config.yaml --allow-exec --baseline /tmp/mcpcl-baseline.json
+```
+
+An existing baseline is replaced only by `snapshot --force`. Neither `test` nor
+`diff` updates it. Baselines contain public tool schemas verbatim, not runtime
+results or environments; review advertised defaults/examples before committing.
+Default diff gates fail only BREAKING changes; `--strict` also fails UNKNOWN.
+Description changes are REVIEW. See [compatibility](docs/compatibility.md).
