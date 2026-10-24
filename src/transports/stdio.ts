@@ -3,6 +3,7 @@ import { Client } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 import type { Config } from '../types.js';
 import { Failure } from '../types.js';
+import { version } from '../version.js';
 import { registerSecrets } from '../reports/redact.js';
 
 // A subclass makes SDK version probing use this same bounded transport rather
@@ -93,7 +94,7 @@ export async function withSession<T>(
     ),
   );
   const client = new Client(
-    { name: 'mcp-contractlab', version: '0.1.0' },
+    { name: 'mcp-contractlab', version },
     {
       supportedProtocolVersions: ['2026-07-28'],
       versionNegotiation: {

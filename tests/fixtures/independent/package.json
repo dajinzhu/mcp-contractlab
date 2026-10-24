@@ -1,0 +1,11 @@
+{
+  "name": "mcp-contractlab-independent-fixture",
+  "private": true,
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server-everything": "2.0.0"
+  }
+}
