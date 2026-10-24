@@ -2,8 +2,8 @@
 
 Test your MCP tools before your agents trust them.
 
-An independent MIT-licensed MCP behavior-contract test runner. Phase 2 implements
-explicit stdio inspection, behavior tests and conservative interface gates using official MCP SDK v2.4.0,
+An independent MIT-licensed MCP behavior-contract test runner. Phase 3 implements
+explicit stdio inspection, behavior tests, conservative interface gates and JUnit reporting using official MCP SDK v2.4.0,
 protocol **2026-07-28**. Not production-ready. Legacy protocol revisions are not
 verified; no LLM, GPU, database, account or external MCP service is needed.
 
@@ -82,7 +82,7 @@ See [configuration](docs/configuration.md), [report format](docs/reports.md),
 [contributing](CONTRIBUTING.md), [agent rules](AGENTS.md), and
 [the original build plan](CODEX_BUILD_PLAN.md).
 
-Phase 3 JUnit/distribution and Phase 4 HTTP/coverage are not implemented yet. The npm package remains private and unpublished.
+Phase 4 HTTP/coverage is not implemented yet. The npm package remains private and unpublished.
 
 ## Interface baselines
 
@@ -96,3 +96,25 @@ An existing baseline is replaced only by `snapshot --force`. Neither `test` nor
 results or environments; review advertised defaults/examples before committing.
 Default diff gates fail only BREAKING changes; `--strict` also fails UNKNOWN.
 Description changes are REVIEW. See [compatibility](docs/compatibility.md).
+
+## CI reports and distribution checks
+
+```sh
+npm run cli -- test -c examples/mcpcl.config.yaml --allow-exec --report junit --output /tmp/mcpcl-junit.xml
+npm run test:package
+```
+
+The package check builds and packs the CLI, installs the tarball in a clean
+consumer directory, invokes the installed binary, and verifies both passing and
+failing examples. It needs npm registry access, not a public MCP service.
+For the additional independent upstream server fixture (Node 24 only):
+
+```sh
+npm run fixture:install
+npm run test:independent
+```
+
+The main CLI remains tested on Node 22/24. The independently maintained Everything
+server 2.0.0 requires Node 24 and has its own pinned fixture lockfile. Only its
+side-effect-free echo tool is authorized. These checks are additional, not silently
+skipped tests in the main suite. See [release preparation](docs/releasing.md).

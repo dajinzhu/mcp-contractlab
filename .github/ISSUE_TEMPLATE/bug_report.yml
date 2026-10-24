@@ -1,0 +1,23 @@
+name: Bug report
+description: Report a reproducible CLI or contract-checking defect
+title: '[Bug]: '
+body:
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include commands and a safe local fixture; never paste tokens or production data.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual result
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Node, npm, CLI and operating system versions
+    validations:
+      required: true

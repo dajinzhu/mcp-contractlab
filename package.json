@@ -1,6 +1,6 @@
 {
   "name": "mcp-contractlab",
-  "version": "0.0.0",
+  "version": "0.1.0-beta.1",
   "private": true,
   "description": "Deterministic behavior-contract testing for MCP tools (Phase 0 scaffold).",
   "type": "module",
@@ -18,7 +18,11 @@
     "test:unit": "vitest run tests/unit",
     "test:smoke": "vitest run tests/integration",
     "demo": "node dist/examples/smoke-client.js",
-    "cli": "node dist/src/cli.js"
+    "cli": "node dist/src/cli.js",
+    "prepack": "npm run build",
+    "test:package": "node scripts/verify-package.mjs",
+    "fixture:install": "npm ci --prefix tests/fixtures/independent --cache /tmp/mcpcl-independent-npm-cache",
+    "test:independent": "vitest run --config vitest.independent.config.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/client": "2.4.0",
@@ -32,6 +36,7 @@
     "@eslint/js": "10.0.1",
     "@types/node": "22.20.5",
     "eslint": "10.13.0",
+    "fast-xml-parser": "5.11.2",
     "prettier": "3.9.10",
     "typescript": "5.9.3",
     "typescript-eslint": "8.72.0",
@@ -39,5 +44,22 @@
   },
   "bin": {
     "mcpcl": "dist/src/cli.js"
-  }
+  },
+  "files": [
+    "dist/src",
+    "dist/examples",
+    "examples/*.yaml",
+    "docs",
+    "AGENTS.md",
+    "CONTRIBUTING.md",
+    "CODEX_BUILD_PLAN.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dajinzhu/mcp-contractlab.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dajinzhu/mcp-contractlab/issues"
+  },
+  "homepage": "https://github.com/dajinzhu/mcp-contractlab#readme"
 }

@@ -1,6 +1,7 @@
 import { writeFile } from 'node:fs/promises';
 import { Failure, type Report } from '../types.js';
 import { redact } from './redact.js';
+import { junitReport } from './junit.js';
 
 export function consoleReport(report: Report): string {
   return [
@@ -19,12 +20,14 @@ export async function output(
 ): Promise<void> {
   const safe = redact(value);
   const text =
-    format === 'console' &&
-    typeof safe === 'object' &&
-    safe !== null &&
-    'reportVersion' in safe
-      ? consoleReport(safe as Report)
-      : JSON.stringify(safe, null, 2);
+    format === 'junit'
+      ? junitReport(safe as Report)
+      : format === 'console' &&
+          typeof safe === 'object' &&
+          safe !== null &&
+          'reportVersion' in safe
+        ? consoleReport(safe as Report)
+        : JSON.stringify(safe, null, 2);
   if (Buffer.byteLength(text) > 4 * 1024 * 1024)
     throw new Failure(2, 'Report exceeds 4 MiB');
   if (destination) {

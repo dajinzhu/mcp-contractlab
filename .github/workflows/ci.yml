@@ -31,6 +31,12 @@ jobs:
       - run: npm test
       - run: npm run test:unit
       - run: npm run test:smoke
+      - run: npm run test:package
+      - if: matrix.node == 24
+        run: npm run fixture:install
+      - if: matrix.node == 24
+        run: npm run test:independent
+      - run: npm run cli -- test -c examples/mcpcl.config.yaml --allow-exec --report junit --output /tmp/mcpcl-junit.xml
       - run: npm run cli -- inspect -c examples/mcpcl.config.yaml --allow-exec
       - run: npm run cli -- test -c examples/mcpcl.config.yaml --allow-exec
       - run: npm run cli -- snapshot -c examples/mcpcl.config.yaml --allow-exec --output /tmp/mcpcl-baseline.json

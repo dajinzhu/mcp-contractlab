@@ -14,6 +14,7 @@ import {
   writeSnapshot,
 } from './contracts/snapshot.js';
 import { compareSnapshots } from './contracts/diff.js';
+import { version } from './version.js';
 
 const controller = new AbortController();
 const stop = () => controller.abort();
@@ -22,7 +23,7 @@ process.once('SIGTERM', stop);
 const program = new Command()
   .name('mcpcl')
   .description('Explicit MCP tool behavior contracts')
-  .version('0.1.0')
+  .version(version)
   .exitOverride();
 program.configureOutput({ writeErr: () => {} });
 for (const name of ['inspect', 'test'] as const) {
@@ -34,7 +35,7 @@ for (const name of ['inspect', 'test'] as const) {
       'Authorize launching the configured stdio process',
       false,
     )
-    .option('--report <format>', 'console or json', 'console')
+    .option('--report <format>', 'console, json or junit', 'console')
     .option('--output <path>', 'Write report to a file')
     .action(
       async (options: {
@@ -43,8 +44,14 @@ for (const name of ['inspect', 'test'] as const) {
         report: string;
         output?: string;
       }) => {
-        if (!['console', 'json'].includes(options.report))
-          throw new Failure(2, 'Report format must be console or json');
+        if (
+          !['console', 'json', 'junit'].includes(options.report) ||
+          (name === 'inspect' && options.report === 'junit')
+        )
+          throw new Failure(
+            2,
+            'Test reports support console/json/junit; inspect supports console/json',
+          );
         const config = await loadConfig(options.config);
         if (name === 'test') {
           const report = await runSuite(
