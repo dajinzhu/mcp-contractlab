@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  phase-0:
+  checks:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
@@ -31,7 +31,17 @@ jobs:
       - run: npm test
       - run: npm run test:unit
       - run: npm run test:smoke
+      - run: npm run cli -- inspect -c examples/mcpcl.config.yaml --allow-exec
+      - run: npm run cli -- test -c examples/mcpcl.config.yaml --allow-exec
       - run: npm run demo -- --allow-exec
+      - name: Verify three broken contracts exit 1
+        shell: bash
+        run: |
+          set +e
+          npm run cli -- test -c examples/mcpcl.broken.yaml --allow-exec
+          actual_status=$?
+          set -e
+          test "$actual_status" -eq 1
       - name: Verify deliberate failing expectation exits 1
         shell: bash
         run: |

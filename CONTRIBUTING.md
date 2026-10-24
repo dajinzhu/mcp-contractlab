@@ -5,8 +5,8 @@ README's development checks, in order. `npm ci` preserves the committed lockfile
 update dependencies intentionally with npm and include the resulting lockfile in
 the same review. The existing MIT license applies to this project's contributions.
 
-Keep changes small and scoped to the authorized phase. Phase 0 contains only the
-local SDK example, tests, research and development tooling. No package is published;
+Keep changes small and scoped to the authorized phase. Phase 1 adds the explicit stdio CLI, configuration, contracts and reports.
+Later phases remain gated on successful CI and merge. No package is published;
 `private: true` prevents accidental npm publication. Do not claim later features
 work before their tests exist and execute.
 

@@ -1,3 +1,16 @@
+# Current architecture: Phase 1
+
+The CLI loads strict version-1 YAML, preflights safety, discovers tools through the
+pinned modern official SDK client, validates every input, then invokes only the
+explicit cases sequentially. Schema checks run in resource-limited workers;
+JSON Pointer assertions compare raw data. Reports redact only after comparison.
+The official SDK request API carries tools/call; using it directly lets the runner
+apply output validation in workers instead of synchronous SDK/Ajv validation.
+No wire framing, manual initialization, retries or protocol sessions are implemented.
+
+See configuration.md, security.md and reports.md for implemented contracts.
+Phase 0 research below is retained as historical evidence, not current scope.
+
 # Phase 0 architecture and specification findings
 
 Research date: **2026-10-24**. Scope: a local, CPU-only SDK connectivity proof and

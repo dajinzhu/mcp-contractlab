@@ -13,5 +13,10 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["examples/**/*.ts", "tests/**/*.ts", "vitest.config.ts"]
+  "include": [
+    "examples/**/*.ts",
+    "tests/**/*.ts",
+    "vitest.config.ts",
+    "src/**/*.ts"
+  ]
 }

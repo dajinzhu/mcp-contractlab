@@ -2,48 +2,66 @@
 
 Test your MCP tools before your agents trust them.
 
-An independent MIT-licensed project working toward deterministic behavior-contract
-tests for MCP servers. **Phase 0 only:** a strict TypeScript scaffold and a working
-local example using official MCP TypeScript SDK v2.4.0. No general `mcpcl` CLI or
-contract runner is implemented yet. This project is not an official MCP SDK or a
-fork of one, and is not production-ready.
+An independent MIT-licensed MCP behavior-contract test runner. Phase 1 implements
+explicit stdio tool inspection and behavior tests using official MCP SDK v2.4.0,
+protocol **2026-07-28**. Not production-ready. Legacy protocol revisions are not
+verified; no LLM, GPU, database, account or external MCP service is needed.
 
-## Run the local example
+## Quick start
 
-Requires Node.js **22.13.0 or newer** and npm. CI targets Node 22 and 24.
-No GPU, LLM API key, account, database or external MCP server is required. npm
-installation needs registry access; the demo and tests use local stdio only.
-
-From the repository root:
+Requires Node.js >=22.13.0 and npm. From the repository root:
 
 ```sh
 npm ci
 npm run build
-npm run demo -- --help
-npm run demo -- --allow-exec
+npm run cli -- --help
+npm run cli -- inspect -c examples/mcpcl.config.yaml --allow-exec
+npm run cli -- test -c examples/mcpcl.config.yaml --allow-exec
 ```
 
-The demo launches only the checked-in example server, discovers `echo` and `sum`,
-then explicitly calls **only** `sum(2, 3)` once:
-
-```text
-PASS discovery: echo, sum (MCP 2026-07-28)
-PASS sum(2, 3): /structuredContent/value = 5
-```
-
-To demonstrate an actual failing check, deliberately expect the wrong sum:
+The last command runs three explicitly authorized, side-effect-free local `sum`
+cases and exits 0. Relative paths resolve from the configuration's directory.
+To save a machine-readable report:
 
 ```sh
-npm run demo -- --allow-exec --expect-sum 6
+npm run cli -- test -c examples/mcpcl.config.yaml --allow-exec --report json --output /tmp/mcpcl-report.json
 ```
 
-This exits **1** and prints
-`FAIL: sum /structuredContent/value: expected 6, actual 5`.
-Without `--allow-exec`, the demo exits **3** before launching a server. Invalid
-arguments and transport errors exit **2**; a successful demo exits **0**. These
-options belong to the fixed Phase 0 demo, not a general-purpose CLI.
+For a deliberately failing suite:
 
-## Development checks
+```sh
+npm run cli -- test -c examples/mcpcl.broken.yaml --allow-exec
+```
+
+All three cases fail with exit **1**, identifying the case, JSON Pointer, expected
+and actual values. This is deliberate; it is not a passing contract run.
+The original Phase 0 demo also remains available as `npm run demo -- --allow-exec`.
+Without `--allow-exec`, launching a server is blocked with exit **3**.
+
+## Contract tests and safety
+
+Launching a process requires `--allow-exec`; tool calls additionally require both
+an explicit case and `safety.allowToolCalls`. An unauthorized tool or insufficient
+invocation budget blocks the **whole suite before launching anything**. `inspect`
+never calls tools. Unknown tools and invalid inputs are detected before any calls.
+Calls are sequential and never retried automatically.
+
+Assertions use RFC 6901 JSON Pointer and `equals`, `exists` or `type`; missing values
+are distinct from null. Inputs and declared structured outputs use JSON Schema
+2020-12. Schema validation runs in bounded workers; external `$ref` is never fetched.
+Format keywords are annotations, not additional format assertions. Tool error
+results (`isError`) are distinct from protocol/transport failures.
+
+Exit codes: **0** success; **1** contract failure; **2** invalid config, launch,
+transport, timeout or interruption; **3** safety blocked. Empty suites report zero
+checks and do not constitute acceptance evidence. Reports count passed, failed,
+blocked and unrun cases. A transport failure stops subsequent calls.
+
+These permissions do not sandbox configured programs or external side effects.
+Use disposable environments and read-only credentials. Never test production tools
+without independently reviewing their effects. See [security](docs/security.md).
+
+## Development
 
 ```sh
 npm ci
@@ -54,29 +72,16 @@ npm run format:check
 npm test
 npm run test:unit
 npm run test:smoke
+npm run demo -- --allow-exec
 ```
 
-Build before running tests: the integration tests exercise the compiled server and
-client. `npm run format` formats maintained files; the original supplied build plan
-is preserved verbatim. GitHub Actions runs these checks plus passing and deliberately
-failing demo commands on CPU-only Ubuntu with Node 22 and 24.
+Build first: integration tests exercise compiled fixtures. GitHub Actions uses
+Node 22 and 24. Each phase's remote CI must succeed before advancing.
 
-## Scope and safety
+See [configuration](docs/configuration.md), [report format](docs/reports.md),
+[architecture](docs/architecture.md), [competitive observations](docs/competitive-notes.md),
+[contributing](CONTRIBUTING.md), [agent rules](AGENTS.md), and
+[the original build plan](CODEX_BUILD_PLAN.md).
 
-The fixture advertises two side-effect-free tools: numeric `sum` and bounded string
-`echo`. The demo requires process-launch consent, runs a fixed executable with fixed
-arguments, limits message buffers to 64 KiB, discards server stderr, bounds requests,
-and closes the child on completion, failure, SIGINT or SIGTERM. Tests themselves
-explicitly authorize launching this reviewed fixture. No real destructive tools are
-invoked. Process permissions and external effects are **not sandboxed** by this
-project; use disposable environments and read-only credentials for future servers.
-
-Only protocol **2026-07-28** is exercised. Older revisions are unverified and the
-fixture rejects legacy connections. No YAML config, arbitrary server launch,
-`inspect`/`test`/`snapshot`/`diff` commands, assertion engine, reusable allowlist,
-reporting, HTTP transport or package publication is provided in Phase 0.
-
-See [architecture and upstream findings](docs/architecture.md),
-[competitive notes](docs/competitive-notes.md),
-[actual validation results](docs/phase0-validation.md), [contributing](CONTRIBUTING.md),
-[agent rules](AGENTS.md), and the [full build plan](CODEX_BUILD_PLAN.md).
+Phase 2 snapshots/diff, Phase 3 JUnit/distribution, and Phase 4 HTTP/coverage are
+not implemented yet. The npm package remains private and unpublished.

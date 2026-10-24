@@ -1,0 +1,33 @@
+schemaVersion: 1
+server:
+  name: local-echo-demo
+  transport: stdio
+  command: node
+  args: [dist/examples/servers/echo-server.js]
+  cwd: ..
+  timeoutMs: 10000
+safety:
+  allowToolCalls: [sum]
+  maxToolCalls: 10
+  toolTimeoutMs: 5000
+cases:
+  - id: sum-positive
+    tool: sum
+    arguments: { a: 2, b: 3 }
+    expect:
+      isError: false
+      assertions:
+        - { path: /structuredContent/value, operator: equals, value: 5 }
+        - { path: /structuredContent/value, operator: type, value: number }
+  - id: sum-zero
+    tool: sum
+    arguments: { a: 0, b: 0 }
+    expect:
+      assertions:
+        - { path: /structuredContent/value, operator: equals, value: 0 }
+  - id: sum-negative
+    tool: sum
+    arguments: { a: -4, b: 1 }
+    expect:
+      assertions:
+        - { path: /structuredContent/value, operator: equals, value: -3 }
