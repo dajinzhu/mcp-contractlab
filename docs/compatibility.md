@@ -44,3 +44,20 @@ there is no implicit legacy initialize fallback.
 The negative legacy clients exist only in compatibility tests. The product does
 not offer these revisions or silently fall back; legacy-server interoperability
 and public-host HTTP/TLS integration remain unverified.
+
+### Constrained and composed schema caution
+
+Any changed input schema containing composition, refs or dependent/unevaluated
+constraints is UNKNOWN, even if a superficial root required/type comparison looks
+breaking. A root type narrowing is classified BREAKING only when the old schema
+has no other validating constraints. For example, number with enum [1,2] becoming
+integer with the same enum is UNKNOWN rather than a false definite break. Likewise,
+adding root required [a] when allOf already requires a is UNKNOWN. Newly required
+properties are classified directly only for the supported simple root structure;
+other cases remain reviewable uncertainty. Strict mode may opt to fail these gates.
+
+For a new required-field proof, the old root must admit objects and its required
+properties must have demonstrably inhabited simple schemas. False schemas,
+non-object-only roots, constrained required values and invalid/oversized type unions
+remain UNKNOWN. Type unions are bounded to valid JSON primitive categories and
+required names use sets, avoiding quadratic comparisons on untrusted duplicates.
