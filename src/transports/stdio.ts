@@ -3,6 +3,7 @@ import { Client } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 import type { Config } from '../types.js';
 import { Failure } from '../types.js';
+import { withHttpSession } from './http.js';
 import { version } from '../version.js';
 import { registerSecrets } from '../reports/redact.js';
 
@@ -10,7 +11,7 @@ import { registerSecrets } from '../reports/redact.js';
 // than launching an unobserved disposable sibling process.
 class BoundedStdio extends StdioClientTransport {
   constructor(
-    server: Config['server'],
+    server: Extract<Config['server'], { transport: 'stdio' }>,
     private readonly fail: () => void,
   ) {
     const env: Record<string, string> = {};
@@ -81,6 +82,9 @@ export async function withSession<T>(
   signal: AbortSignal,
   body: (client: Client, signal: AbortSignal) => Promise<T>,
 ): Promise<T> {
+  const server = config.server;
+  if (server.transport === 'streamable-http')
+    return withHttpSession({ ...config, server }, signal, body);
   const controller = new AbortController();
   const abort = () => controller.abort();
   signal.addEventListener('abort', abort, { once: true });
@@ -108,7 +112,7 @@ export async function withSession<T>(
   let transport: BoundedStdio | undefined;
   let pid: number | null = null;
   try {
-    transport = new BoundedStdio(config.server, abort);
+    transport = new BoundedStdio(server, abort);
     await client.connect(transport, {
       signal: controller.signal,
       timeout: config.server.timeoutMs,

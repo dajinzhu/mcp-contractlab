@@ -41,3 +41,29 @@ canonical array indices are resolved, never prototype properties or expressions.
 preflights consent, all allowlists and budget, then discovers tools and validates
 all inputs before issuing any call. If input validation fails, invalid cases fail
 and other cases remain unrun. Unknown tools exit 2 without any tool invocation.
+
+## Parameter tables (additive v1 feature)
+
+A case may instead contain only `id`, `tool` and nonempty `rows`. Each row contains
+its own `id`, `arguments` and `expect` using the same rules as an ordinary case.
+The runner expands IDs as `group/row` before safety preflight. Group IDs and expanded
+IDs must be unique; at most 1000 expanded cases are permitted. No interpolation or
+shared executable expressions exist. See the parameterized YAML example.
+
+## Streamable HTTP (additive v1 feature)
+
+The server variant `transport: streamable-http` requires `name`, exact HTTPS `url`
+and optional `timeoutMs` (default 10000) and `authEnv` (a variable name, never a
+literal token). It rejects stdio-only command/args/cwd/env keys. The existing stdio
+variant remains unchanged. `safety.allowedHttpHosts` defaults to empty and must
+explicitly include the URL's canonical hostname; no wildcard matching occurs.
+The complete URL fixes the path and port. Credentials, search/query and fragments
+are disallowed. `--allow-http` grants endpoint consent, independently of tool calls;
+`--allow-exec` does not grant network consent. Inspect/snapshot/diff still never
+call tools. Test cases still require both explicit cases and allowlisted tool names.
+
+Only no-auth and an explicitly bound Bearer variable are supported. Missing/invalid
+bound credentials fail without printing values. DNS lookup is timed; every resolved
+address must be public unicast, and the connector uses that checked address set.
+All redirects and changes to the exact endpoint are blocked. No HTTP downgrade,
+OAuth discovery, permissive private-network flag or TLS-verification bypass exists.

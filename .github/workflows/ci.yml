@@ -36,6 +36,9 @@ jobs:
         run: npm run fixture:install
       - if: matrix.node == 24
         run: npm run test:independent
+      - if: matrix.node == 24
+        run: npm run benchmark -- --output /tmp/mcpcl-benchmark.json
+      - run: npm run cli -- test -c examples/mcpcl.parameterized.yaml --allow-exec --report json
       - run: npm run cli -- test -c examples/mcpcl.config.yaml --allow-exec --report junit --output /tmp/mcpcl-junit.xml
       - run: npm run cli -- inspect -c examples/mcpcl.config.yaml --allow-exec
       - run: npm run cli -- test -c examples/mcpcl.config.yaml --allow-exec

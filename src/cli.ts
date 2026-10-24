@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command, CommanderError } from 'commander';
 import { loadConfig } from './config/load.js';
-import { Failure } from './types.js';
+import { Failure, type Config } from './types.js';
 import { withSession } from './transports/stdio.js';
 import { discover, runSuite } from './runner/run-suite.js';
 import { output } from './reports/output.js';
@@ -18,6 +18,13 @@ import { version } from './version.js';
 
 const controller = new AbortController();
 const stop = () => controller.abort();
+const authorized = (
+  config: Config,
+  options: { allowExec?: boolean; allowHttp?: boolean },
+) =>
+  config.server.transport === 'stdio'
+    ? Boolean(options.allowExec)
+    : Boolean(options.allowHttp);
 process.once('SIGINT', stop);
 process.once('SIGTERM', stop);
 const program = new Command()
@@ -35,12 +42,18 @@ for (const name of ['inspect', 'test'] as const) {
       'Authorize launching the configured stdio process',
       false,
     )
+    .option(
+      '--allow-http',
+      'Authorize the configured allowlisted HTTPS endpoint',
+      false,
+    )
     .option('--report <format>', 'console, json or junit', 'console')
     .option('--output <path>', 'Write report to a file')
     .action(
       async (options: {
         config: string;
         allowExec: boolean;
+        allowHttp: boolean;
         report: string;
         output?: string;
       }) => {
@@ -56,14 +69,17 @@ for (const name of ['inspect', 'test'] as const) {
         if (name === 'test') {
           const report = await runSuite(
             config,
-            options.allowExec,
+            authorized(config, options),
             controller.signal,
           );
           await output(report, options.report, options.output);
           process.exitCode = report.exitCode;
         } else {
-          if (!options.allowExec)
-            throw new Failure(3, 'Process launch requires --allow-exec');
+          if (!authorized(config, options))
+            throw new Failure(
+              3,
+              'Transport consent requires --allow-exec for stdio or --allow-http for HTTPS',
+            );
           const tools = await withSession(
             config,
             controller.signal,
@@ -92,7 +108,12 @@ for (const name of ['snapshot', 'diff'] as const) {
   const command = program
     .command(name)
     .requiredOption('-c, --config <path>', 'YAML configuration')
-    .option('--allow-exec', 'Authorize configured stdio process launch', false);
+    .option('--allow-exec', 'Authorize configured stdio process launch', false)
+    .option(
+      '--allow-http',
+      'Authorize the configured allowlisted HTTPS endpoint',
+      false,
+    );
   if (name === 'snapshot')
     command
       .requiredOption('--output <path>', 'Explicit baseline destination')
@@ -110,19 +131,23 @@ for (const name of ['snapshot', 'diff'] as const) {
     async (options: {
       config: string;
       allowExec: boolean;
+      allowHttp: boolean;
       output?: string;
       baseline?: string;
       force?: boolean;
       strict?: boolean;
     }) => {
-      if (!options.allowExec)
-        throw new Failure(3, 'Process launch requires --allow-exec');
+      const config = await loadConfig(options.config);
+      if (!authorized(config, options))
+        throw new Failure(
+          3,
+          'Transport consent requires --allow-exec for stdio or --allow-http for HTTPS',
+        );
       if (options.output) await distinctFiles(options.config, options.output);
       const baseline =
         name === 'diff' ? await readSnapshot(options.baseline!) : undefined;
       if (options.output && options.baseline)
         await distinctFiles(options.baseline, options.output);
-      const config = await loadConfig(options.config);
       const tools = await withSession(
         config,
         controller.signal,

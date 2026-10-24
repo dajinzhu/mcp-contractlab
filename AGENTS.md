@@ -10,8 +10,11 @@ Public npm publication and external outreach still require specific confirmation
 - Use official split MCP v2 packages; never substitute `@modelcontextprotocol/sdk`.
 - Pin the client to MCP `2026-07-28` using the SDK's version-negotiation API.
   Its default is legacy. Do not implement handshakes or wire framing yourself.
-- CLI subprocess launch requires `--allow-exec`. Tool calls require explicit cases
-  and the configured allowlist. Never auto-call discovered tools or trust annotations.
+- CLI subprocess launch requires `--allow-exec`; reviewed HTTPS endpoints require
+  `--allow-http`, exact endpoint/host authorization and public DNS/IP validation.
+  Tool calls require explicit cases
+  and the configured allowlist. Parameter expansion must precede budget checking.
+  Never auto-call discovered tools or trust annotations.
 - Launch with argument arrays and `shell: false` (the SDK stdio transport does so).
 - Bound requests and buffers. Close child transports in `finally`, including failure
   and interruption paths. Never print environments, raw stderr or secret data.
@@ -46,3 +49,10 @@ failures, changed files, unsupported features, and whether remote CI actually ra
 Phase 0 acceptance requires clean installation, build, typecheck, lint, unit tests
 and real stdio smoke tests in CI. Local success alone does not establish remote CI
 success. Keep Phase 1 unstarted while acceptance is pending.
+
+For the Node-24 independent fixture use `npm run fixture:install` then
+`npm run test:independent`. Run `npm run test:package` for installed-tarball
+validation. `npm run benchmark` is a Node-24 deterministic experiment, not a
+real-world accuracy claim. Compatibility tests deliberately use legacy SDK clients
+only to verify rejection; product clients stay pinned to the modern protocol.
+No external feedback has been collected; never invent users or case studies.

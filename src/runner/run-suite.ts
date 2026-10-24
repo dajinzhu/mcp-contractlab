@@ -8,6 +8,7 @@ import {
 } from '../types.js';
 import { assertResult } from '../contracts/assertions.js';
 import { checkSchema } from '../contracts/schema.js';
+import { coverageTracker } from './coverage.js';
 import { withSession } from '../transports/stdio.js';
 
 export function makeReport(
@@ -59,6 +60,11 @@ export async function runSuite(
     status: 'unrun',
     diagnostics: [],
   }));
+  const coverage = coverageTracker();
+  const report = (...args: Parameters<typeof makeReport>): Report => ({
+    ...makeReport(...args),
+    coverage: coverage.report(),
+  });
   if (
     !allowExec ||
     config.cases.some((c) => !config.safety.allowToolCalls.includes(c.tool)) ||
@@ -70,18 +76,19 @@ export async function runSuite(
         'Process consent, tool allowlist or invocation budget blocked the entire run',
       ];
     }
-    return makeReport(results, 3, [
+    return report(results, 3, [
       'Safety preflight blocked execution; no tools were called',
     ]);
   }
   if (config.cases.length === 0) {
-    return makeReport(results, 2, [
+    return report(results, 2, [
       'No test cases configured; no tools were called',
     ]);
   }
   try {
     return await withSession(config, signal, async (client, signal) => {
       const tools = await discover(client, config, signal);
+      coverage.discover(tools);
       const index = new Map(tools.map((t) => [t.name, t]));
       if (config.cases.some((c) => !index.has(c.tool)))
         throw new Failure(
@@ -103,7 +110,7 @@ export async function runSuite(
         }
       }
       if (results.some((r) => r.status === 'failed'))
-        return makeReport(results, 1, [
+        return report(results, 1, [
           'Input validation failed; no tools were called',
         ]);
       for (let i = 0; i < config.cases.length; i++) {
@@ -116,6 +123,7 @@ export async function runSuite(
           // Official SDK request API; independent worker-based output validation
           // avoids synchronous untrusted regex execution in the SDK's validator.
           // No retries: one case consumes exactly one tools/call budget unit.
+          coverage.attempt(c.tool);
           const result = await client.request(
             {
               method: 'tools/call',
@@ -127,6 +135,7 @@ export async function runSuite(
               signal,
             },
           );
+          coverage.complete(c.tool, c.arguments);
           if (Boolean(result.isError) !== c.expect.isError)
             record.diagnostics.push(
               `/isError: expected ${c.expect.isError}, actual ${Boolean(result.isError)}`,
@@ -159,18 +168,22 @@ export async function runSuite(
           record.diagnostics.push(
             'Tool request timed out or protocol/transport failed',
           );
-          return makeReport(results, 2, [
-            'Run stopped after tool request failure',
-          ]);
+          return report(results, 2, ['Run stopped after tool request failure']);
         }
       }
-      return makeReport(
+      return report(
         results,
         results.some((r) => r.status === 'failed') ? 1 : 0,
       );
     });
   } catch (error) {
-    return makeReport(results, error instanceof Failure ? error.code : 2, [
+    if (error instanceof Failure && error.code === 3)
+      for (const result of results)
+        if (result.status === 'unrun') {
+          result.status = 'blocked';
+          result.diagnostics.push(error.message);
+        }
+    return report(results, error instanceof Failure ? error.code : 2, [
       error instanceof Failure ? error.message : 'Run failed safely',
     ]);
   }

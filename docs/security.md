@@ -26,6 +26,31 @@ cannot identify every possible secret, so do not place sensitive data in fixture
 case IDs or nonstandard credential fields. Reports are written with mode 0600 when
 newly created. Existing file permissions are not changed.
 
-Only protocol 2026-07-28 and local stdio are currently supported. No arbitrary HTTP
-requests, OAuth, automatic baseline updates, package publication or external user
-contact occur as part of contract tests.
+Only protocol 2026-07-28 is supported. No OAuth, automatic baseline updates,
+package publication or external user contact occurs as part of contract tests.
+
+## Streamable HTTP threat model
+
+Network consent requires `--allow-http`, an exact HTTPS endpoint and an explicit
+hostname allowlist. URL credentials, query strings and fragments are rejected.
+IPv4/IPv6 private, loopback, unspecified, multicast, reserved, link-local, mapped
+private and metadata addresses are blocked; any unsafe DNS answer rejects the whole
+set. DNS lookup has a deadline and is performed once. A custom TLS agent resolves
+connections only to the checked addresses, keeping the original hostname for TLS
+certificate/SNI verification. TLS verification is never disabled. Redirects are
+rejected before following them, even on the same origin. Requests cannot change
+path, port, scheme, host or method beyond POST/GET/DELETE on the exact URL.
+
+Only explicit environment-bound Bearer authentication is supported. The token is
+registered for redaction, never placed in a URL, and cannot follow a redirect.
+OAuth and proxies are not supported; direct HTTPS/DNS egress must be available.
+Transport errors are sanitized. Incoming HTTP bodies are limited to 64 KiB per
+response and 2 MiB per session; outgoing bodies to 1 MiB. Requests and sessions
+also have deadlines, cancellation and no automatic tool retries.
+
+Tests use explicit injected DNS/network adapters and an in-memory official SDK
+handler, so they never contact real private/public endpoints. This demonstrates
+protocol serialization and policy enforcement, not independent public-host TLS
+interoperability. The production CLI exposes no test adapter or private-network
+bypass flag. A caller's own DNS/network stack and trusted endpoint remain part of
+the trust boundary; an allowed public server's tool side effects are not sandboxed.
