@@ -165,8 +165,8 @@ export const en = {
   'html.noCoverage': () =>
     'Tool discovery is incomplete or coverage metadata is unavailable. Coverage is unknown, not 0% or 100%.',
   'html.advertised': () => 'Advertised tools',
-  'html.attempted': () => 'Call attempted',
-  'html.completed': () => 'Call completed',
+  'html.attempted': () => 'Tools with attempted calls',
+  'html.completed': () => 'Tools with completed calls',
   'html.untested': () => 'Without completed calls',
   'html.noTools': () => 'None recorded',
   'html.coverageDetail': () =>

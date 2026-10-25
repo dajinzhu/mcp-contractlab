@@ -91,6 +91,12 @@ try {
   assert.equal(await page.locator('#exit-code').textContent(), '0');
   assert.equal(await visible(), 3);
   assert.equal(await page.locator('[data-count=passed]').textContent(), '3');
+  assert(
+    (await page.locator('.coverage dt').allInnerTexts()).includes(
+      'Tools with completed calls (1)',
+    ),
+    'Coverage counts distinct tools, not the three completed cases',
+  );
   assert.equal(await overflow(), false);
   await page.screenshot({
     path: join(screenshotDirectory, 'passed-desktop-light.png'),

@@ -148,8 +148,8 @@ export const zhCN = {
   'html.noCoverage': () =>
     '工具发现尚未完成或缺少覆盖数据。覆盖情况未知，不能视为 0% 或 100%。',
   'html.advertised': () => '已发现工具',
-  'html.attempted': () => '已尝试调用',
-  'html.completed': () => '已完成调用',
+  'html.attempted': () => '已尝试调用的工具',
+  'html.completed': () => '已完成调用的工具',
   'html.untested': () => '无完成调用的工具',
   'html.noTools': () => '未记录',
   'html.coverageDetail': () =>
