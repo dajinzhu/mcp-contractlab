@@ -18,9 +18,9 @@ are unrun. Explicit `isError: true` can satisfy a case expecting that result, wh
 transport errors cannot. Output schemas apply to successful tool results.
 
 Inspect emits `{ protocolVersion, tools }` with definitions sorted by tool name;
-its output is redacted and contains input/output schemas and descriptions. Its
-console and JSON selections currently both use readable JSON for complete schema
-visibility. No tool is invoked. Diagnostic JSON is not a canonical baseline.
+its output is redacted and contains input/output schemas and descriptions. JSON
+is the default; `--report console` selects a localized human view that includes
+the schemas. No tool is invoked. Diagnostic JSON is not a canonical baseline.
 
 Diff JSON uses diffVersion 1, protocolVersion, exitCode and an ordered changes array.
 Each change contains tool, path, classification and reason. Snapshot format is
