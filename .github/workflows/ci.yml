@@ -32,6 +32,9 @@ jobs:
       - run: npm run test:unit
       - run: npm run test:smoke
       - run: npm run test:package
+      - run: npm run docs:check
+      - run: npm run demo:breaking
+      - run: git diff --exit-code -- docs/demos/removed-tool.diff.json
       - if: matrix.node == 24
         run: npm run fixture:install
       - if: matrix.node == 24
@@ -86,3 +89,4 @@ jobs:
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
+      - run: npm run test:brand-browser

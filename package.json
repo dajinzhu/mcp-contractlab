@@ -25,7 +25,11 @@
     "test:independent": "vitest run --config vitest.independent.config.ts",
     "benchmark": "node scripts/benchmark.mjs",
     "test:browser": "node scripts/test-html-browser.mjs",
-    "examples:html": "node scripts/generate-html-examples.mjs"
+    "examples:html": "node scripts/generate-html-examples.mjs",
+    "brand:export": "node scripts/export-brand.mjs",
+    "docs:check": "node --test scripts/presentation.test.mjs && node scripts/check-presentation.mjs",
+    "demo:breaking": "node scripts/generate-breaking-demo.mjs",
+    "test:brand-browser": "node scripts/test-brand-browser.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/client": "2.4.0",
@@ -58,7 +62,9 @@
     "docs",
     "AGENTS.md",
     "CONTRIBUTING.md",
-    "CODEX_BUILD_PLAN.md"
+    "CODEX_BUILD_PLAN.md",
+    "assets/brand",
+    "README.zh-CN.md"
   ],
   "repository": {
     "type": "git",
