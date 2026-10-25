@@ -1,155 +1,23 @@
-import console from 'node:console';
+import { mkdtemp, rm } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
+import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import assert from 'node:assert/strict';
-const run = promisify(execFile);
-const directory = await mkdtemp(join(tmpdir(), 'mcpcl-package-'));
+import console from 'node:console';
+import process from 'node:process';
+import { resolve } from 'node:path';
+import { prepareCandidate } from './release/candidate.mjs';
+import { verifyConsumer } from './release/consumer.mjs';
+const retained = process.env.MCPCL_CANDIDATE_OUTPUT;
+const directory = retained
+  ? resolve(retained)
+  : await mkdtemp(join(tmpdir(), 'mcpcl-package-'));
 try {
-  const { stdout } = await run(
-    'npm',
-    ['pack', '--json', '--pack-destination', directory],
-    { timeout: 60_000, maxBuffer: 1024 * 1024 },
-  );
-  const start = stdout.indexOf('[\n');
-  const packed = JSON.parse(stdout.slice(start))[0];
-  const files = packed.files.map((f) => f.path);
-  for (const path of [
-    'README.zh-CN.md',
-    'assets/brand/logo-icon.svg',
-    'assets/brand/logo-horizontal.svg',
-    'assets/brand/logo-dark.svg',
-    'dist/examples/servers/removed-sum-server.js',
-    'examples/mcpcl.removed-tool.yaml',
-    'dist/src/cli.js',
-    'dist/src/contracts/schema-worker.js',
-    'dist/src/i18n/en.js',
-    'dist/src/i18n/zh-CN.js',
-    'dist/src/reports/html.js',
-    'dist/src/reports/html-assets.js',
-    'dist/src/reports/html-file.js',
-    'dist/examples/servers/echo-server.js',
-    'LICENSE',
-  ])
-    assert(files.includes(path), `Missing package file ${path}`);
-  assert(
-    !files.some(
-      (f) =>
-        f.startsWith('tests/') ||
-        f.startsWith('node_modules/') ||
-        f.includes('.env'),
-    ),
-    'Unexpected package content',
-  );
-  await run(
-    'npm',
-    [
-      'install',
-      '--prefix',
-      directory,
-      '--ignore-scripts',
-      '--no-audit',
-      '--no-fund',
-      '--cache',
-      join(directory, 'npm-cache'),
-      join(directory, packed.filename),
-    ],
-    { timeout: 120_000, maxBuffer: 1024 * 1024 },
-  );
-  const installed = join(directory, 'node_modules', 'mcp-contractlab');
-  const manifest = JSON.parse(await readFile(resolve('package.json'), 'utf8'));
-  const binary = join(directory, 'node_modules', '.bin', 'mcpcl');
-  const version = await run(binary, ['--version'], { timeout: 15_000 });
-  assert.equal(version.stdout.trim(), manifest.version);
-  const config = join(installed, 'examples', 'mcpcl.config.yaml');
-  const passed = await run(
-    binary,
-    ['test', '-c', config, '--allow-exec', '--report', 'json'],
-    { cwd: directory, timeout: 30_000 },
-  );
-  assert.equal(JSON.parse(passed.stdout).counts.passed, 3);
-  const chinese = await run(binary, ['--lang', 'zh-CN', '--help'], {
-    timeout: 15000,
-  });
-  assert.match(chinese.stdout, /[\u4e00-\u9fff]/);
-  const localized = await run(
-    binary,
-    ['test', '-c', config, '--allow-exec', '--lang', 'zh-CN'],
-    { cwd: directory, timeout: 30000 },
-  );
-  assert.match(localized.stdout, /3 通过/);
-  const canonical = await run(
-    binary,
-    [
-      'test',
-      '-c',
-      config,
-      '--allow-exec',
-      '--lang',
-      'zh-CN',
-      '--report',
-      'json',
-    ],
-    { cwd: directory, timeout: 30000 },
-  );
-  assert.equal(canonical.stdout, passed.stdout);
-  for (const [name, allow, code] of [
-    ['mcpcl.config.yaml', true, 0],
-    ['mcpcl.broken.yaml', true, 1],
-    ['mcpcl.config.yaml', false, 3],
-  ]) {
-    const path = join(directory, `report-${code}.html`);
-    let status = 0;
-    try {
-      await run(
-        binary,
-        [
-          'test',
-          '-c',
-          join(installed, 'examples', name),
-          '--report',
-          'html',
-          '--output',
-          path,
-          '--lang',
-          'zh-CN',
-          ...(allow ? ['--allow-exec'] : []),
-        ],
-        { cwd: directory, timeout: 30000 },
-      );
-    } catch (error) {
-      status = error.code;
-    }
-    assert.equal(status, code);
-    const html = await readFile(path, 'utf8');
-    assert(html.includes('<html lang="zh-CN">'));
-    assert(html.includes(`id="exit-code">${code}`));
-    assert(html.includes('Content-Security-Policy'));
-  }
-  let failed = false;
-  try {
-    await run(
-      binary,
-      [
-        'test',
-        '-c',
-        join(installed, 'examples', 'mcpcl.broken.yaml'),
-        '--allow-exec',
-        '--lang',
-        'en',
-      ],
-      { cwd: directory, timeout: 30_000 },
-    );
-  } catch (error) {
-    assert.equal(error.code, 1);
-    assert.match(error.stdout, /3 failed/);
-    failed = true;
-  }
-  assert(failed, 'Broken packaged example unexpectedly passed');
+  await promisify(execFile)('npm', ['run', 'build'], { timeout: 60000 });
+  const tarball = await prepareCandidate(directory);
+  await verifyConsumer(tarball, join(directory, 'consumer'));
   console.log(
-    `Package verified: ${packed.filename}; ${files.length} files; installed CLI passes 3 contracts and rejects 3 broken contracts.`,
+    'Package verification passed; candidate reproducibility and complete clean-consumer matrix checked. Nothing published.',
   );
 } finally {
   await rm(directory, { recursive: true, force: true });

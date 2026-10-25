@@ -29,7 +29,13 @@
     "brand:export": "node scripts/export-brand.mjs",
     "docs:check": "node --test scripts/presentation.test.mjs && node scripts/check-presentation.mjs",
     "demo:breaking": "node scripts/generate-breaking-demo.mjs",
-    "test:brand-browser": "node scripts/test-brand-browser.mjs"
+    "test:brand-browser": "node scripts/test-brand-browser.mjs",
+    "release:notices": "node scripts/release/notices.mjs",
+    "release:candidate": "npm run build && node scripts/release/candidate.mjs",
+    "release:verify": "node scripts/release/consumer.mjs",
+    "release:audit": "node scripts/release/audit.mjs",
+    "test:consumer-browser": "node scripts/release/test-consumer-browser.mjs",
+    "release:checks": "node --test scripts/release/release.test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/client": "2.4.0",
@@ -64,7 +70,9 @@
     "CONTRIBUTING.md",
     "CODEX_BUILD_PLAN.md",
     "assets/brand",
-    "README.zh-CN.md"
+    "README.zh-CN.md",
+    "THIRD_PARTY_NOTICES.md",
+    "third-party-licenses"
   ],
   "repository": {
     "type": "git",

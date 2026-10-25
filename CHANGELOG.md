@@ -21,4 +21,7 @@
 - Original light/dark vector identity and PNG exports, complete English/Chinese
   READMEs, first-contributor guidance and an actual removed-tool demonstration.
 
+- Release-candidate packaging, runtime license attribution, clean consumer matrix
+  and independent read-only filesystem validation; publication remains gated.
+
 No npm release or Git tag has been published. Production readiness is not claimed.

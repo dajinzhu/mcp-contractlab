@@ -32,7 +32,10 @@ jobs:
       - run: npm run test:unit
       - run: npm run test:smoke
       - run: npm run test:package
+        env:
+          MCPCL_CANDIDATE_OUTPUT: /tmp/mcpcl-beta-candidate
       - run: npm run docs:check
+      - run: npm run release:checks
       - run: npm run demo:breaking
       - run: git diff --exit-code -- docs/demos/removed-tool.diff.json
       - if: matrix.node == 24
@@ -74,6 +77,22 @@ jobs:
           set -e
           test "$actual_status" -eq 1
 
+      - run: npm run release:audit -- /tmp/mcpcl-beta-candidate/audit
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: beta-candidate-node-${{ matrix.node }}
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            /tmp/mcpcl-beta-candidate/*.tgz
+            /tmp/mcpcl-beta-candidate/candidate.json
+            /tmp/mcpcl-beta-candidate/pack-dry-run.json
+            /tmp/mcpcl-beta-candidate/SHA256SUMS
+            /tmp/mcpcl-beta-candidate/consumer/*.json
+            /tmp/mcpcl-beta-candidate/consumer/*.xml
+            /tmp/mcpcl-beta-candidate/consumer/*.html
+            /tmp/mcpcl-beta-candidate/audit/readiness-audit.json
+
   html-browser:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -90,3 +109,4 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
       - run: npm run test:brand-browser
+      - run: npm run test:consumer-browser

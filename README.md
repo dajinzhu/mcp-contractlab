@@ -212,3 +212,6 @@ variable names; OAuth and legacy-protocol fallback are not implemented.
 Next priorities are external reproduction and feedback, owner-controlled live HTTPS
 interoperability, and careful release preparation. No published beta, public-host
 TLS verification, external feedback or production readiness is implied by this PR.
+
+Release preparation and future npm installation drafts are separate from today’s
+unpublished source instructions: [release-readiness assessment](docs/releases/README.md).
