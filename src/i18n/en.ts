@@ -87,7 +87,7 @@ export const en = {
   'help.config': () => 'YAML configuration',
   'help.exec': () => 'Authorize launching the configured stdio process',
   'help.http': () => 'Authorize the configured allowlisted HTTPS endpoint',
-  'help.formats': () => 'console, json or junit',
+  'help.formats': () => 'console, json, junit or html (html requires --output)',
   'help.output': () => 'Write report to a file',
   'help.snapshotOutput': () => 'Explicit baseline destination',
   'help.force': () => 'Explicitly replace an existing baseline',
@@ -125,6 +125,64 @@ export const en = {
   'view.protocol': () => 'Protocol',
   'view.truncated': () =>
     '[Presentation truncated; counts and exit status are unchanged. Use a JSON report for full diagnostics.]',
+  'html.pathRequired': () => 'HTML reports require an explicit --output path.',
+  'html.newFile': () =>
+    'HTML output must be a new file in an existing directory; existing files and links are never overwritten.',
+  'html.large': () =>
+    'HTML report exceeds 4 MiB including both languages and embedded assets; use JSON or a smaller suite.',
+  'html.title': () => 'Contract report',
+  'html.eyebrow': () => 'MCP CONTRACTLAB / LOCAL REPORT',
+  'html.subtitle': () => 'Explicit contracts. Observable results.',
+  'html.offline': () => 'Offline · self-contained',
+  'html.theme': () => 'Switch light / dark theme',
+  'html.language': () => 'Report language',
+  'html.exit': () => 'Exit code',
+  'html.success': () => 'All requested contracts passed',
+  'html.successDetail': () =>
+    'These results describe only the explicit cases in this run, not full server correctness.',
+  'html.failure': () => 'Contract failures detected',
+  'html.failureDetail': () =>
+    'Review the failing expectations below. A completed call can still fail its contract.',
+  'html.blocked': () => 'Execution blocked by safety policy',
+  'html.blockedDetail': () =>
+    'Authorization, the tool allowlist or invocation budget blocked execution. No coverage is inferred from blocked cases.',
+  'html.incomplete': () => 'Execution incomplete',
+  'html.incompleteDetail': () =>
+    'An operational error or unrun cases prevented a complete result. Unrun cases are not passes; review run diagnostics.',
+  'html.errors': () => 'Run diagnostics',
+  'html.results': () => 'Case results',
+  'html.search': () => 'Search cases, tools or diagnostics',
+  'html.filters': () => 'Filter by result',
+  'html.all': () => 'All cases',
+  'html.empty': () => 'No cases match the current search and filter.',
+  'html.noCases': () =>
+    'No cases were executed or configured. Review run diagnostics.',
+  'html.diagnostics': () => 'Diagnostic details',
+  'html.noDiagnostics': () => 'No case diagnostics recorded.',
+  'html.coverage': () => 'Tool coverage',
+  'html.measured': () => 'Measured in this run',
+  'html.unmeasured': () => 'Unmeasured / not proven',
+  'html.noCoverage': () =>
+    'Tool discovery is incomplete or coverage metadata is unavailable. Coverage is unknown, not 0% or 100%.',
+  'html.advertised': () => 'Advertised tools',
+  'html.attempted': () => 'Call attempted',
+  'html.completed': () => 'Call completed',
+  'html.untested': () => 'Without completed calls',
+  'html.noTools': () => 'None recorded',
+  'html.coverageDetail': () =>
+    'Completed calls only; passing assertions do not prove full behavior coverage. Failed assertions may still count as completed calls.',
+  'html.coverageLimits': () =>
+    'Only explicit root-property enums with at most 32 choices are tracked. References, compositions, nested properties, optionality and arbitrary behavior remain unmeasured.',
+  'html.enums': () => 'Observed enum choices',
+  'html.noEnums': () =>
+    'No eligible enum observations recorded. This is not complete schema coverage.',
+  'html.enumIndices': () => 'Observed indices / total choices',
+  'html.rawLimits': () => 'Additional recorded limitations',
+  'html.static': () =>
+    'Without JavaScript, all results remain readable. Switching and filtering require JavaScript.',
+  'html.footer': () =>
+    'Generated from an actual ContractLab run. No network, telemetry or tool execution in this file.',
+  'html.example': () => 'Fixture example · not a live production measurement',
   'config.yaml': (line: number | undefined, col: number | undefined) =>
     `Invalid YAML${line === undefined ? '' : ` at ${line}:${col}`}`,
   'config.invalid': (path: string, code: string | undefined) =>

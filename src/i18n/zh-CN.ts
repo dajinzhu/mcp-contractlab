@@ -72,7 +72,8 @@ export const zhCN = {
   'help.config': () => 'YAML 配置文件',
   'help.exec': () => '授权启动配置的 stdio 进程',
   'help.http': () => '授权配置且列入白名单的 HTTPS 端点',
-  'help.formats': () => 'console、json 或 junit',
+  'help.formats': () =>
+    'console、json、junit 或 html（html 必须指定 --output）',
   'help.output': () => '将报告写入文件',
   'help.snapshotOutput': () => '显式指定基线目标文件',
   'help.force': () => '显式覆盖已有基线',
@@ -108,6 +109,62 @@ export const zhCN = {
   'view.protocol': () => '协议',
   'view.truncated': () =>
     '[展示内容已截断；计数和退出码未改变。完整诊断请查看 JSON 报告。]',
+  'html.pathRequired': () => 'HTML 报告必须显式指定 --output 路径。',
+  'html.newFile': () =>
+    'HTML 输出必须是已有目录中的新文件；不会覆盖已有文件或链接。',
+  'html.large': () =>
+    'HTML 报告（含两种语言与内嵌资源）超过 4 MiB；请使用 JSON 或较小的测试套件。',
+  'html.title': () => '契约测试报告',
+  'html.eyebrow': () => 'MCP CONTRACTLAB / 本地报告',
+  'html.subtitle': () => '显式契约，可审计的结果。',
+  'html.offline': () => '离线 · 单文件',
+  'html.theme': () => '切换浅色 / 深色主题',
+  'html.language': () => '报告语言',
+  'html.exit': () => '退出码',
+  'html.success': () => '所有请求的契约均已通过',
+  'html.successDetail': () =>
+    '结果仅描述本次显式配置的测试用例，不代表服务器的全部行为均正确。',
+  'html.failure': () => '检测到契约失败',
+  'html.failureDetail': () =>
+    '请查看下方失败的预期。调用完成并不代表契约通过。',
+  'html.blocked': () => '安全策略已阻止执行',
+  'html.blockedDetail': () =>
+    '授权、工具白名单或调用预算阻止了执行。不会根据已阻止的用例推断覆盖率。',
+  'html.incomplete': () => '执行未完成',
+  'html.incompleteDetail': () =>
+    '操作错误或未运行用例导致结果不完整。未运行不等于通过；请查看运行诊断。',
+  'html.errors': () => '运行诊断',
+  'html.results': () => '用例结果',
+  'html.search': () => '搜索用例、工具或诊断',
+  'html.filters': () => '按结果筛选',
+  'html.all': () => '全部用例',
+  'html.empty': () => '没有符合当前搜索与筛选条件的用例。',
+  'html.noCases': () => '没有执行或配置的用例。请查看运行诊断。',
+  'html.diagnostics': () => '诊断详情',
+  'html.noDiagnostics': () => '未记录用例诊断。',
+  'html.coverage': () => '工具覆盖情况',
+  'html.measured': () => '本次已测量',
+  'html.unmeasured': () => '未测量 / 未证明',
+  'html.noCoverage': () =>
+    '工具发现尚未完成或缺少覆盖数据。覆盖情况未知，不能视为 0% 或 100%。',
+  'html.advertised': () => '已发现工具',
+  'html.attempted': () => '已尝试调用',
+  'html.completed': () => '已完成调用',
+  'html.untested': () => '无完成调用的工具',
+  'html.noTools': () => '未记录',
+  'html.coverageDetail': () =>
+    '仅统计已完成调用；断言通过不代表完整行为覆盖。断言失败的调用也可能计为已完成。',
+  'html.coverageLimits': () =>
+    '仅跟踪最多 32 个选项的显式根属性枚举。引用、组合、嵌套属性、可选性及任意行为均未测量。',
+  'html.enums': () => '已观测枚举选项',
+  'html.noEnums': () => '未记录符合条件的枚举观测。这不代表完整 schema 覆盖。',
+  'html.enumIndices': () => '已观测索引 / 选项总数',
+  'html.rawLimits': () => '其他已记录限制',
+  'html.static': () =>
+    '禁用 JavaScript 时仍可阅读所有结果。切换和筛选功能需要 JavaScript。',
+  'html.footer': () =>
+    '来自实际 ContractLab 执行。此文件不会联网、采集遥测或执行工具。',
+  'html.example': () => 'Fixture 示例 · 非生产实测',
   'config.yaml': (line, col) =>
     `YAML 无效${line === undefined ? '' : `，位置 ${line}:${col}`}`,
   'config.invalid': (path, code) => `配置无效，位置 /${path}：${code}`,

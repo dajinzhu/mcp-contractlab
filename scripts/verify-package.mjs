@@ -21,6 +21,9 @@ try {
     'dist/src/contracts/schema-worker.js',
     'dist/src/i18n/en.js',
     'dist/src/i18n/zh-CN.js',
+    'dist/src/reports/html.js',
+    'dist/src/reports/html-assets.js',
+    'dist/src/reports/html-file.js',
     'dist/examples/servers/echo-server.js',
     'LICENSE',
   ])
@@ -86,6 +89,39 @@ try {
     { cwd: directory, timeout: 30000 },
   );
   assert.equal(canonical.stdout, passed.stdout);
+  for (const [name, allow, code] of [
+    ['mcpcl.config.yaml', true, 0],
+    ['mcpcl.broken.yaml', true, 1],
+    ['mcpcl.config.yaml', false, 3],
+  ]) {
+    const path = join(directory, `report-${code}.html`);
+    let status = 0;
+    try {
+      await run(
+        binary,
+        [
+          'test',
+          '-c',
+          join(installed, 'examples', name),
+          '--report',
+          'html',
+          '--output',
+          path,
+          '--lang',
+          'zh-CN',
+          ...(allow ? ['--allow-exec'] : []),
+        ],
+        { cwd: directory, timeout: 30000 },
+      );
+    } catch (error) {
+      status = error.code;
+    }
+    assert.equal(status, code);
+    const html = await readFile(path, 'utf8');
+    assert(html.includes('<html lang="zh-CN">'));
+    assert(html.includes(`id="exit-code">${code}`));
+    assert(html.includes('Content-Security-Policy'));
+  }
   let failed = false;
   try {
     await run(
