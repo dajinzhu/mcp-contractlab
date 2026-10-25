@@ -1,8 +1,10 @@
+import { tmpdir } from 'node:os';
+import { checkArtifacts } from './check-artifacts.mjs';
 import { codeBlocks } from '../presentation-lib.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { readFile, mkdtemp, rm } from 'node:fs/promises';
+import { resolve, join } from 'node:path';
 import { validateManifest, prepareCandidate } from './candidate.mjs';
 const manifest = JSON.parse(await readFile('package.json', 'utf8'));
 test('candidate retains the private package, exact bin, version and supported engines', () =>
@@ -48,4 +50,13 @@ test('future installation drafts retain matching commands and explicit non-publi
       '--ignore-scripts',
     ])
       assert(document.includes(value));
+});
+
+test('missing candidate artifacts cannot be accepted for upload', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'mcpcl-missing-artifacts-'));
+  try {
+    await assert.rejects(checkArtifacts(directory), /ENOENT/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });

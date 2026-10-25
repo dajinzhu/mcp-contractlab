@@ -35,7 +35,8 @@
     "release:verify": "node scripts/release/consumer.mjs",
     "release:audit": "node scripts/release/audit.mjs",
     "test:consumer-browser": "node scripts/release/test-consumer-browser.mjs",
-    "release:checks": "node --test scripts/release/release.test.mjs"
+    "release:checks": "node --test scripts/release/release.test.mjs",
+    "release:artifacts": "node scripts/release/check-artifacts.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/client": "2.4.0",

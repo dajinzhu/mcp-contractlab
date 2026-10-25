@@ -20,5 +20,5 @@ try {
     'Package verification passed; candidate reproducibility and complete clean-consumer matrix checked. Nothing published.',
   );
 } finally {
-  await rm(directory, { recursive: true, force: true });
+  if (!retained) await rm(directory, { recursive: true, force: true });
 }

@@ -78,6 +78,7 @@ jobs:
           test "$actual_status" -eq 1
 
       - run: npm run release:audit -- /tmp/mcpcl-beta-candidate/audit
+      - run: npm run release:artifacts -- /tmp/mcpcl-beta-candidate
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: beta-candidate-node-${{ matrix.node }}
