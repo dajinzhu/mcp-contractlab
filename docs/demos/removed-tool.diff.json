@@ -1,0 +1,13 @@
+{
+  "diffVersion": 1,
+  "protocolVersion": "2026-07-28",
+  "exitCode": 1,
+  "changes": [
+    {
+      "tool": "sum",
+      "path": "",
+      "classification": "BREAKING",
+      "reason": "Tool removed"
+    }
+  ]
+}

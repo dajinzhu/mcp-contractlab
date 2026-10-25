@@ -17,6 +17,12 @@ try {
   const packed = JSON.parse(stdout.slice(start))[0];
   const files = packed.files.map((f) => f.path);
   for (const path of [
+    'README.zh-CN.md',
+    'assets/brand/logo-icon.svg',
+    'assets/brand/logo-horizontal.svg',
+    'assets/brand/logo-dark.svg',
+    'dist/examples/servers/removed-sum-server.js',
+    'examples/mcpcl.removed-tool.yaml',
     'dist/src/cli.js',
     'dist/src/contracts/schema-worker.js',
     'dist/src/i18n/en.js',

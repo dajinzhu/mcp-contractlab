@@ -1,0 +1,10 @@
+schemaVersion: 1
+server:
+  name: local-deliberate-breaking-change
+  transport: stdio
+  command: node
+  args: [dist/examples/servers/removed-sum-server.js]
+  cwd: ..
+safety:
+  allowToolCalls: []
+cases: []

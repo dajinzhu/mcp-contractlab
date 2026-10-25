@@ -18,4 +18,7 @@
   results, honest coverage, hash-based CSP, redaction, atomic no-overwrite output
   and a complete 4 MiB document budget.
 
+- Original light/dark vector identity and PNG exports, complete English/Chinese
+  READMEs, first-contributor guidance and an actual removed-tool demonstration.
+
 No npm release or Git tag has been published. Production readiness is not claimed.
