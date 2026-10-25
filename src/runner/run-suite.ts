@@ -1,3 +1,4 @@
+import { message, texts, appendText, textFor } from '../i18n/message.js';
 import type { Client, Tool } from '@modelcontextprotocol/client';
 import {
   Failure,
@@ -6,7 +7,7 @@ import {
   type ExitCode,
   type Report,
 } from '../types.js';
-import { assertResult } from '../contracts/assertions.js';
+import { assertionDiagnostic } from '../contracts/assertions.js';
 import { checkSchema } from '../contracts/schema.js';
 import { coverageTracker } from './coverage.js';
 import { withSession } from '../transports/stdio.js';
@@ -45,7 +46,7 @@ export async function discover(
     tools.length > 1000 ||
     new Set(tools.map((t) => t.name)).size !== tools.length
   )
-    throw new Failure(2, 'Too many tools or duplicate tool names');
+    throw new Failure(2, message('discovery.invalidTools'));
   return tools.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 }
 
@@ -72,18 +73,12 @@ export async function runSuite(
   ) {
     for (const result of results) {
       result.status = 'blocked';
-      result.diagnostics = [
-        'Process consent, tool allowlist or invocation budget blocked the entire run',
-      ];
+      result.diagnostics = texts(message('safety.blockedCases'));
     }
-    return report(results, 3, [
-      'Safety preflight blocked execution; no tools were called',
-    ]);
+    return report(results, 3, texts(message('safety.blockedRun')));
   }
   if (config.cases.length === 0) {
-    return report(results, 2, [
-      'No test cases configured; no tools were called',
-    ]);
+    return report(results, 2, texts(message('run.empty')));
   }
   try {
     return await withSession(config, signal, async (client, signal) => {
@@ -91,14 +86,11 @@ export async function runSuite(
       coverage.discover(tools);
       const index = new Map(tools.map((t) => [t.name, t]));
       if (config.cases.some((c) => !index.has(c.tool)))
-        throw new Failure(
-          2,
-          'A configured case names an unknown tool; no tools were called',
-        );
+        throw new Failure(2, message('run.unknownTool'));
       // Validate all inputs before invoking any tool.
       for (let i = 0; i < config.cases.length; i++) {
         if (signal.aborted)
-          throw new Failure(2, 'Run interrupted during input validation');
+          throw new Failure(2, message('run.inputInterrupted'));
         const c = config.cases[i]!;
         const check = await checkSchema(
           index.get(c.tool)!.inputSchema,
@@ -106,16 +98,17 @@ export async function runSuite(
         );
         if (!check.valid) {
           results[i]!.status = 'failed';
-          results[i]!.diagnostics.push(`/arguments${check.diagnostic}`);
+          appendText(results[i]!.diagnostics, {
+            prefix: '/arguments',
+            detail: check.presentation ?? check.diagnostic,
+          });
         }
       }
       if (results.some((r) => r.status === 'failed'))
-        return report(results, 1, [
-          'Input validation failed; no tools were called',
-        ]);
+        return report(results, 1, texts(message('run.inputFailed')));
       for (let i = 0; i < config.cases.length; i++) {
         if (signal.aborted)
-          throw new Failure(2, 'Run interrupted before tool invocation');
+          throw new Failure(2, message('run.callInterrupted'));
         const c = config.cases[i]!;
         const record = results[i]!;
         const tool = index.get(c.tool)!;
@@ -137,38 +130,36 @@ export async function runSuite(
           );
           coverage.complete(c.tool, c.arguments);
           if (Boolean(result.isError) !== c.expect.isError)
-            record.diagnostics.push(
-              `/isError: expected ${c.expect.isError}, actual ${Boolean(result.isError)}`,
+            appendText(
+              record.diagnostics,
+              message('run.isError', c.expect.isError, Boolean(result.isError)),
             );
           if (tool.outputSchema !== undefined && !result.isError) {
             if (!Object.hasOwn(result, 'structuredContent'))
-              record.diagnostics.push(
-                '/structuredContent: missing output required by advertised schema',
-              );
+              appendText(record.diagnostics, message('run.missingOutput'));
             else {
               const check = await checkSchema(
                 tool.outputSchema,
                 result.structuredContent,
               );
               if (!check.valid)
-                record.diagnostics.push(
-                  `/structuredContent${check.diagnostic}`,
-                );
+                appendText(record.diagnostics, {
+                  prefix: '/structuredContent',
+                  detail: check.presentation ?? check.diagnostic,
+                });
             }
           }
           for (const assertion of c.expect.assertions) {
-            const error = assertResult(result, assertion);
-            if (error) record.diagnostics.push(error);
+            const error = assertionDiagnostic(result, assertion);
+            if (error) appendText(record.diagnostics, error);
           }
           if (signal.aborted)
-            throw new Failure(2, 'Run interrupted during result validation');
+            throw new Failure(2, message('run.outputInterrupted'));
           record.status = record.diagnostics.length ? 'failed' : 'passed';
         } catch {
           record.status = 'failed';
-          record.diagnostics.push(
-            'Tool request timed out or protocol/transport failed',
-          );
-          return report(results, 2, ['Run stopped after tool request failure']);
+          appendText(record.diagnostics, message('run.requestFailed'));
+          return report(results, 2, texts(message('run.stopped')));
         }
       }
       return report(
@@ -181,10 +172,16 @@ export async function runSuite(
       for (const result of results)
         if (result.status === 'unrun') {
           result.status = 'blocked';
-          result.diagnostics.push(error.message);
+          appendText(result.diagnostics, textFor(error, error.message));
         }
-    return report(results, error instanceof Failure ? error.code : 2, [
-      error instanceof Failure ? error.message : 'Run failed safely',
-    ]);
+    return report(
+      results,
+      error instanceof Failure ? error.code : 2,
+      texts(
+        error instanceof Failure
+          ? textFor(error, error.message)
+          : message('run.failed'),
+      ),
+    );
   }
 }

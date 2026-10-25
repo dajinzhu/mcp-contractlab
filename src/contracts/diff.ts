@@ -1,3 +1,4 @@
+import { message, english, rememberText, type Text } from '../i18n/message.js';
 import { canonical, type Snapshot } from './snapshot.js';
 export interface Change {
   tool: string;
@@ -129,34 +130,35 @@ export function compareSnapshots(before: Snapshot, after: Snapshot): Change[] {
     const add = (
       path: string,
       classification: Change['classification'],
-      reason: string,
-    ) => changes.push({ tool: name, path, classification, reason });
+      reason: Text,
+    ) => {
+      const change = {
+        tool: name,
+        path,
+        classification,
+        reason: english(reason),
+      };
+      rememberText(change, reason);
+      changes.push(change);
+    };
     if (!b) {
-      add('', 'BREAKING', 'Tool removed');
+      add('', 'BREAKING', message('diff.removed'));
       continue;
     }
     if (!a) {
-      add('', 'NON_BREAKING', 'Tool added');
+      add('', 'NON_BREAKING', message('diff.added'));
       continue;
     }
     for (const key of ['description', 'title'] as const)
       if (!equal(a[key], b[key]))
-        add('/' + key, 'REVIEW', 'Display text changed');
+        add('/' + key, 'REVIEW', message('diff.text'));
     if (!equal(a.annotations, b.annotations))
-      add(
-        '/annotations',
-        'REVIEW',
-        'Untrusted tool annotations changed; review effects',
-      );
+      add('/annotations', 'REVIEW', message('diff.annotations'));
     if (!equal(a.outputSchema, b.outputSchema))
-      add('/outputSchema', 'UNKNOWN', 'Output compatibility not proven');
+      add('/outputSchema', 'UNKNOWN', message('diff.outputUnknown'));
     if (equal(a.inputSchema, b.inputSchema)) continue;
     if (composed(a.inputSchema) || composed(b.inputSchema)) {
-      add(
-        '/inputSchema',
-        'UNKNOWN',
-        'Composed or referenced schema compatibility not proven',
-      );
+      add('/inputSchema', 'UNKNOWN', message('diff.composedUnknown'));
       continue;
     }
     const oldRequired = new Set(required(a.inputSchema));
@@ -166,7 +168,7 @@ export function compareSnapshots(before: Snapshot, after: Snapshot): Change[] {
     const simpleRequired = inhabitedSimpleRoot(a.inputSchema);
     const knownAdded = simpleRequired ? added : [];
     if (knownAdded.length)
-      add('/inputSchema/required', 'BREAKING', 'New required input properties');
+      add('/inputSchema/required', 'BREAKING', message('diff.required'));
     const was = types(a.inputSchema),
       now = types(b.inputSchema);
     const narrowed =
@@ -176,12 +178,7 @@ export function compareSnapshots(before: Snapshot, after: Snapshot): Change[] {
       was.some(
         (t) => !now.includes(t) && !(t === 'integer' && now.includes('number')),
       );
-    if (narrowed)
-      add(
-        '/inputSchema/type',
-        'BREAKING',
-        'Root input type rejects previously allowed types',
-      );
+    if (narrowed) add('/inputSchema/type', 'BREAKING', message('diff.type'));
     // Remove only the differences explicitly classified above. All residual
     // constraints (including combinators, nested required, refs) remain unknown.
     const residualA = { ...object(a.inputSchema) },
@@ -195,7 +192,7 @@ export function compareSnapshots(before: Snapshot, after: Snapshot): Change[] {
       delete residualB.type;
     }
     if (!equal(residualA, residualB) || (!knownAdded.length && !narrowed))
-      add('/inputSchema', 'UNKNOWN', 'Schema compatibility not proven');
+      add('/inputSchema', 'UNKNOWN', message('diff.unknown'));
   }
   return changes;
 }

@@ -15,7 +15,16 @@ import {
 } from './contracts/snapshot.js';
 import { compareSnapshots } from './contracts/diff.js';
 import { version } from './version.js';
+import { message, textFor } from './i18n/message.js';
+import { resolveLocale, systemLocale } from './i18n/locale.js';
+import { translate, t, plain } from './i18n/presentation.js';
+import { localizedHelp } from './i18n/help.js';
 
+const locale = resolveLocale(
+  process.argv.slice(2),
+  process.env,
+  systemLocale(),
+);
 const controller = new AbortController();
 const stop = () => controller.abort();
 const authorized = (
@@ -29,26 +38,24 @@ process.once('SIGINT', stop);
 process.once('SIGTERM', stop);
 const program = new Command()
   .name('mcpcl')
-  .description('Explicit MCP tool behavior contracts')
-  .version(version)
+  .description(t(locale, 'cli.description'))
+  .version(version, '-V, --version', t(locale, 'help.version'))
+  .option('--lang <locale>', t(locale, 'help.language'))
+  .helpCommand('help [command]', t(locale, 'help.command'))
   .exitOverride();
-program.configureOutput({ writeErr: () => {} });
 for (const name of ['inspect', 'test'] as const) {
   program
     .command(name)
-    .requiredOption('-c, --config <path>', 'YAML configuration')
+    .description(t(locale, name === 'inspect' ? 'help.inspect' : 'help.test'))
+    .requiredOption('-c, --config <path>', t(locale, 'help.config'))
+    .option('--allow-exec', t(locale, 'help.exec'), false)
+    .option('--allow-http', t(locale, 'help.http'), false)
     .option(
-      '--allow-exec',
-      'Authorize launching the configured stdio process',
-      false,
+      '--report <format>',
+      t(locale, name === 'inspect' ? 'help.inspectFormats' : 'help.formats'),
+      name === 'inspect' ? 'json' : 'console',
     )
-    .option(
-      '--allow-http',
-      'Authorize the configured allowlisted HTTPS endpoint',
-      false,
-    )
-    .option('--report <format>', 'console, json or junit', 'console')
-    .option('--output <path>', 'Write report to a file')
+    .option('--output <path>', t(locale, 'help.output'))
     .action(
       async (options: {
         config: string;
@@ -61,10 +68,7 @@ for (const name of ['inspect', 'test'] as const) {
           !['console', 'json', 'junit'].includes(options.report) ||
           (name === 'inspect' && options.report === 'junit')
         )
-          throw new Failure(
-            2,
-            'Test reports support console/json/junit; inspect supports console/json',
-          );
+          throw new Failure(2, message('cli.format'));
         const config = await loadConfig(options.config);
         if (name === 'test') {
           const report = await runSuite(
@@ -72,14 +76,11 @@ for (const name of ['inspect', 'test'] as const) {
             authorized(config, options),
             controller.signal,
           );
-          await output(report, options.report, options.output);
+          await output(report, options.report, options.output, locale);
           process.exitCode = report.exitCode;
         } else {
           if (!authorized(config, options))
-            throw new Failure(
-              3,
-              'Transport consent requires --allow-exec for stdio or --allow-http for HTTPS',
-            );
+            throw new Failure(3, message('cli.consent'));
           const tools = await withSession(
             config,
             controller.signal,
@@ -87,8 +88,9 @@ for (const name of ['inspect', 'test'] as const) {
           );
           await output(
             { protocolVersion: '2026-07-28', tools },
-            'json',
+            options.report,
             options.output,
+            locale,
           );
         }
       },
@@ -96,37 +98,31 @@ for (const name of ['inspect', 'test'] as const) {
 }
 async function distinctFiles(a: string, b: string): Promise<void> {
   if (resolve(a) === resolve(b))
-    throw new Failure(2, 'Output must not overwrite config or baseline');
+    throw new Failure(2, message('output.configCollision'));
   const [left, right] = await Promise.all([
     stat(a).catch(() => undefined),
     stat(b).catch(() => undefined),
   ]);
   if (left && right && left.dev === right.dev && left.ino === right.ino)
-    throw new Failure(2, 'Output aliases config or baseline');
+    throw new Failure(2, message('output.aliasCollision'));
 }
 for (const name of ['snapshot', 'diff'] as const) {
   const command = program
     .command(name)
-    .requiredOption('-c, --config <path>', 'YAML configuration')
-    .option('--allow-exec', 'Authorize configured stdio process launch', false)
-    .option(
-      '--allow-http',
-      'Authorize the configured allowlisted HTTPS endpoint',
-      false,
-    );
+    .description(t(locale, name === 'snapshot' ? 'help.snapshot' : 'help.diff'))
+    .requiredOption('-c, --config <path>', t(locale, 'help.config'))
+    .option('--allow-exec', t(locale, 'help.exec'), false)
+    .option('--allow-http', t(locale, 'help.http'), false);
   if (name === 'snapshot')
     command
-      .requiredOption('--output <path>', 'Explicit baseline destination')
-      .option('--force', 'Explicitly replace an existing baseline', false);
+      .requiredOption('--output <path>', t(locale, 'help.snapshotOutput'))
+      .option('--force', t(locale, 'help.force'), false);
   else
     command
-      .requiredOption('--baseline <path>', 'Read-only baseline')
-      .option(
-        '--strict',
-        'Fail compatibility gate on UNKNOWN as well as BREAKING',
-        false,
-      )
-      .option('--output <path>', 'Write JSON diff report');
+      .requiredOption('--baseline <path>', t(locale, 'help.baseline'))
+      .option('--strict', t(locale, 'help.strict'), false)
+      .option('--output <path>', t(locale, 'help.diffOutput'))
+      .option('--report <format>', t(locale, 'help.diffFormats'), 'json');
   command.action(
     async (options: {
       config: string;
@@ -136,13 +132,13 @@ for (const name of ['snapshot', 'diff'] as const) {
       baseline?: string;
       force?: boolean;
       strict?: boolean;
+      report?: string;
     }) => {
+      if (name === 'diff' && !['console', 'json'].includes(options.report!))
+        throw new Failure(2, message('cli.format'));
       const config = await loadConfig(options.config);
       if (!authorized(config, options))
-        throw new Failure(
-          3,
-          'Transport consent requires --allow-exec for stdio or --allow-http for HTTPS',
-        );
+        throw new Failure(3, message('cli.consent'));
       if (options.output) await distinctFiles(options.config, options.output);
       const baseline =
         name === 'diff' ? await readSnapshot(options.baseline!) : undefined;
@@ -156,7 +152,7 @@ for (const name of ['snapshot', 'diff'] as const) {
       const snapshot = createSnapshot(tools);
       if (name === 'snapshot') {
         await writeSnapshot(options.output!, snapshot, options.force ?? false);
-        console.log('Snapshot written explicitly; no tools called.');
+        process.stdout.write(plain(t(locale, 'snapshot.success')) + '\n');
       } else {
         const changes = compareSnapshots(baseline!, snapshot);
         const code = changes.some(
@@ -173,14 +169,17 @@ for (const name of ['snapshot', 'diff'] as const) {
             exitCode: code,
             changes,
           },
-          'json',
+          options.report!,
           options.output,
+          locale,
         );
         process.exitCode = code;
       }
     },
   );
 }
+for (const command of [program, ...program.commands])
+  localizedHelp(command, locale);
 try {
   await program.parseAsync();
 } catch (error) {
@@ -188,12 +187,19 @@ try {
     process.exitCode = 0;
   else {
     process.exitCode = error instanceof Failure ? error.code : 2;
-    console.error(
-      redact(
-        error instanceof Failure
-          ? error.message
-          : 'Invalid invocation or operation failed safely',
-      ),
+    process.stderr.write(
+      plain(
+        String(
+          redact(
+            translate(
+              error instanceof Failure
+                ? textFor(error, error.message)
+                : message('cli.invalid'),
+              locale,
+            ),
+          ),
+        ),
+      ) + '\n',
     );
   }
 } finally {

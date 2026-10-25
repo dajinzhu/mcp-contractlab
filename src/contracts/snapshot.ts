@@ -1,3 +1,4 @@
+import { message } from '../i18n/message.js';
 import { open, link, rename, unlink } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import * as z from 'zod/v4';
@@ -21,8 +22,7 @@ const schema = z.strictObject({
 export type Snapshot = z.infer<typeof schema>;
 
 export function canonical(value: unknown, depth = 0): unknown {
-  if (depth > 50)
-    throw new Failure(2, 'Contract exceeds canonicalization depth limit');
+  if (depth > 50) throw new Failure(2, message('snapshot.depth'));
   if (Array.isArray(value)) return value.map((v) => canonical(v, depth + 1));
   if (value !== null && typeof value === 'object')
     return Object.fromEntries(
@@ -70,7 +70,7 @@ export function parseSnapshot(source: string): Snapshot {
     canonical(value);
     return value;
   } catch {
-    throw new Failure(2, 'Invalid, unsupported or oversized snapshot');
+    throw new Failure(2, message('snapshot.invalid'));
   }
 }
 export async function readSnapshot(path: string): Promise<Snapshot> {
@@ -92,7 +92,7 @@ export async function readSnapshot(path: string): Promise<Snapshot> {
     return parseSnapshot(buffer.subarray(0, offset).toString('utf8'));
   } catch (e) {
     if (e instanceof Failure) throw e;
-    throw new Failure(2, 'Cannot read baseline');
+    throw new Failure(2, message('snapshot.readFailed'));
   } finally {
     await file?.close();
   }
@@ -113,10 +113,7 @@ export async function writeSnapshot(
     if (force) await rename(temporary, path);
     else await link(temporary, path);
   } catch {
-    throw new Failure(
-      2,
-      'Cannot write snapshot; destination must exist only with --force and its parent directory must already exist',
-    );
+    throw new Failure(2, message('snapshot.writeFailed'));
   } finally {
     await unlink(temporary).catch(() => {});
   }

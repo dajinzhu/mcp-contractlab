@@ -154,3 +154,15 @@ See [methodology and limitations](docs/research.md) and the checked-in raw resul
 This is a small deterministic experiment, not real-world accuracy or superiority
 against competing tools. External user feedback and public npm publication remain
 pending; the project is not production-ready.
+
+CLI language defaults to the environment. Use `--lang en` or `--lang zh-CN`
+before or after the subcommand, or set `MCPCL_LANG`. For example:
+
+```sh
+mcpcl test -c examples/mcpcl.config.yaml --allow-exec --lang zh-CN
+mcpcl inspect -c examples/mcpcl.config.yaml --allow-exec --report console --lang zh-CN
+```
+
+`inspect` and `diff` still default to JSON; use `--report console` for a localized
+human view. JSON, JUnit, snapshots, exit codes and safety authorization remain
+language independent. See [language behavior](docs/i18n.md).

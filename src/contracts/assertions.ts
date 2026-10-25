@@ -1,6 +1,7 @@
 import { isDeepStrictEqual } from 'node:util';
 import type { Assertion } from '../types.js';
 import { safeValue } from '../reports/redact.js';
+import { message, english, type Message } from '../i18n/message.js';
 
 export function lookup(
   value: unknown,
@@ -23,10 +24,10 @@ export function lookup(
   return { found: true, value: current };
 }
 
-export function assertResult(
+export function assertionDiagnostic(
   result: unknown,
   assertion: Assertion,
-): string | undefined {
+): Message | undefined {
   const actual = lookup(result, assertion.path);
   const type =
     actual.value === null
@@ -44,5 +45,19 @@ export function assertResult(
             ? Number.isInteger(actual.value)
             : assertion.value === type);
   if (passes) return;
-  return `${assertion.path || '(root)'}: expected ${assertion.operator} ${safeValue(assertion.value, assertion.path)}, actual ${actual.found ? safeValue(actual.value, assertion.path) : '(missing)'}`;
+  return message(
+    'assert.failure',
+    assertion.path,
+    assertion.operator,
+    safeValue(assertion.value, assertion.path),
+    actual.found ? safeValue(actual.value, assertion.path) : '',
+    !actual.found,
+  );
+}
+export function assertResult(
+  result: unknown,
+  assertion: Assertion,
+): string | undefined {
+  const diagnostic = assertionDiagnostic(result, assertion);
+  return diagnostic ? english(diagnostic) : undefined;
 }

@@ -19,6 +19,8 @@ try {
   for (const path of [
     'dist/src/cli.js',
     'dist/src/contracts/schema-worker.js',
+    'dist/src/i18n/en.js',
+    'dist/src/i18n/zh-CN.js',
     'dist/examples/servers/echo-server.js',
     'LICENSE',
   ])
@@ -59,6 +61,31 @@ try {
     { cwd: directory, timeout: 30_000 },
   );
   assert.equal(JSON.parse(passed.stdout).counts.passed, 3);
+  const chinese = await run(binary, ['--lang', 'zh-CN', '--help'], {
+    timeout: 15000,
+  });
+  assert.match(chinese.stdout, /[\u4e00-\u9fff]/);
+  const localized = await run(
+    binary,
+    ['test', '-c', config, '--allow-exec', '--lang', 'zh-CN'],
+    { cwd: directory, timeout: 30000 },
+  );
+  assert.match(localized.stdout, /3 通过/);
+  const canonical = await run(
+    binary,
+    [
+      'test',
+      '-c',
+      config,
+      '--allow-exec',
+      '--lang',
+      'zh-CN',
+      '--report',
+      'json',
+    ],
+    { cwd: directory, timeout: 30000 },
+  );
+  assert.equal(canonical.stdout, passed.stdout);
   let failed = false;
   try {
     await run(
@@ -68,6 +95,8 @@ try {
         '-c',
         join(installed, 'examples', 'mcpcl.broken.yaml'),
         '--allow-exec',
+        '--lang',
+        'en',
       ],
       { cwd: directory, timeout: 30_000 },
     );
