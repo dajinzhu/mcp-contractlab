@@ -23,7 +23,9 @@
     "test:package": "node scripts/verify-package.mjs",
     "fixture:install": "npm ci --prefix tests/fixtures/independent --cache /tmp/mcpcl-independent-npm-cache",
     "test:independent": "vitest run --config vitest.independent.config.ts",
-    "benchmark": "node scripts/benchmark.mjs"
+    "benchmark": "node scripts/benchmark.mjs",
+    "test:browser": "node scripts/test-html-browser.mjs",
+    "examples:html": "node scripts/generate-html-examples.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/client": "2.4.0",
@@ -40,6 +42,7 @@
     "@types/node": "22.20.5",
     "eslint": "10.13.0",
     "fast-xml-parser": "5.11.2",
+    "playwright": "1.64.1",
     "prettier": "3.9.10",
     "typescript": "5.9.3",
     "typescript-eslint": "8.72.0",

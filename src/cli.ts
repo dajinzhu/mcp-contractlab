@@ -4,6 +4,7 @@ import { loadConfig } from './config/load.js';
 import { Failure, type Config } from './types.js';
 import { withSession } from './transports/stdio.js';
 import { discover, runSuite } from './runner/run-suite.js';
+import { prepareHtmlOutput } from './reports/html-file.js';
 import { output } from './reports/output.js';
 import { redact } from './reports/redact.js';
 import { resolve } from 'node:path';
@@ -65,10 +66,15 @@ for (const name of ['inspect', 'test'] as const) {
         output?: string;
       }) => {
         if (
-          !['console', 'json', 'junit'].includes(options.report) ||
-          (name === 'inspect' && options.report === 'junit')
+          !['console', 'json', 'junit', 'html'].includes(options.report) ||
+          (name === 'inspect' && !['console', 'json'].includes(options.report))
         )
           throw new Failure(2, message('cli.format'));
+        if (options.report === 'html') {
+          if (!options.output)
+            throw new Failure(2, message('html.pathRequired'));
+          options.output = await prepareHtmlOutput(options.output);
+        }
         const config = await loadConfig(options.config);
         if (name === 'test') {
           const report = await runSuite(

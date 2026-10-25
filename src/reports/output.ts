@@ -1,3 +1,5 @@
+import { htmlReport } from './html.js';
+import { writeHtml } from './html-file.js';
 import { writeFile } from 'node:fs/promises';
 import { Failure, type Report } from '../types.js';
 import { redact } from './redact.js';
@@ -75,6 +77,11 @@ export async function output(
   destination?: string,
   locale: Locale = 'en',
 ): Promise<void> {
+  if (format === 'html') {
+    if (!destination) throw new Failure(2, message('html.pathRequired'));
+    await writeHtml(destination, htmlReport(value as Report, locale));
+    return;
+  }
   const safe = redact(value);
   const canonical =
     format === 'junit'

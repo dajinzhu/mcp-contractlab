@@ -14,4 +14,8 @@
   public-only pinned DNS, redirect refusal and environment-bound Bearer auth.
 - Reproducible synthetic behavior mutation experiment and protocol rejection tests.
 
+- Offline bilingual HTML test reports with theme/language switches, searchable
+  results, honest coverage, hash-based CSP, redaction, atomic no-overwrite output
+  and a complete 4 MiB document budget.
+
 No npm release or Git tag has been published. Production readiness is not claimed.

@@ -4,3 +4,5 @@ dist/
 coverage/
 package-lock.json
 CODEX_BUILD_PLAN.md
+# Generated reports contain hash-authorized assets; preserve their exact bytes.
+docs/examples/html/*.html

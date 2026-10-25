@@ -274,8 +274,12 @@ it('cleans up a real running server after SIGINT and leaves remaining cases unru
   const exited = once(child, 'exit');
   try {
     await expect
-      .poll(async () =>
-        (await readFile(trace, 'utf8').catch(() => '')).includes('CALL hang'),
+      .poll(
+        async () =>
+          (await readFile(trace, 'utf8').catch(() => '')).includes('CALL hang'),
+        // Readiness includes process startup, discovery and schema workers on CI.
+        // Keep the actual SIGINT and cleanup assertions unchanged.
+        { timeout: 5000 },
       )
       .toBe(true);
     child.kill('SIGINT');
