@@ -116,6 +116,11 @@ try {
     '搜索用例、工具或诊断',
   );
   assert.equal(await page.locator('h1').innerText(), '契约测试报告');
+  assert.equal(
+    await page.locator('.metrics').getAttribute('aria-labelledby'),
+    'report-title',
+  );
+  assert.equal(await page.locator('#report-title').innerText(), '契约测试报告');
   await page.locator('[data-filter=failed]').click();
   assert.equal(await visible(), 0);
   assert.equal(await page.locator('#empty').isVisible(), true);

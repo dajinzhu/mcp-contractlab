@@ -117,8 +117,8 @@ export function htmlReport(report: Report, locale: Locale = 'en'): string {
   const document = `<!doctype html>
 <html lang="${locale}"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${escapeHtml(htmlCsp)}"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer"><title>MCP ContractLab — Report / 报告</title><style>${htmlStyle}</style></head><body>
 <main><header class="topbar"><div class="brand"><span class="mark" aria-hidden="true">&gt;_</span><div><span class="eyebrow">${label('html.eyebrow')}</span><strong>MCP ContractLab</strong></div></div><div class="controls"><select id="language" ${accessible('html.language')} aria-label="${escapeHtml(t(locale, 'html.language'))}"><option value="en"${locale === 'en' ? ' selected' : ''}>English</option><option value="zh-CN"${locale === 'zh-CN' ? ' selected' : ''}>简体中文</option></select><button type="button" id="theme" ${accessible('html.theme')} aria-label="${escapeHtml(t(locale, 'html.theme'))}" aria-pressed="false"><span aria-hidden="true">◐</span></button></div></header>
-<section class="hero"><span class="offline">${label('html.offline')}</span><h1>${label('html.title')}</h1><p>${label('html.subtitle')}</p></section>
-<section class="metrics" aria-label="${escapeHtml(t(locale, 'html.title'))}">${statuses.map((status) => `<div class="metric ${status}"><div class="metric-label">${statusLabel(status)}</div><div class="metric-value" data-count="${status}">${escapeHtml(safe.counts[status])}</div></div>`).join('')}<div class="metric"><div class="metric-label">${label('html.exit')}</div><div class="metric-value" id="exit-code">${escapeHtml(safe.exitCode)}</div></div></section>
+<section class="hero"><span class="offline">${label('html.offline')}</span><h1 id="report-title">${label('html.title')}</h1><p>${label('html.subtitle')}</p></section>
+<section class="metrics" aria-labelledby="report-title">${statuses.map((status) => `<div class="metric ${status}"><div class="metric-label">${statusLabel(status)}</div><div class="metric-value" data-count="${status}">${escapeHtml(safe.counts[status])}</div></div>`).join('')}<div class="metric"><div class="metric-label">${label('html.exit')}</div><div class="metric-value" id="exit-code">${escapeHtml(safe.exitCode)}</div></div></section>
 <section class="banner ${kind}" role="status"><strong>${label(heading[kind])}</strong><p>${label(detail[kind])}</p></section>
 ${
   report.errors.length
@@ -139,7 +139,6 @@ ${
       [
         'html.language',
         'html.theme',
-        'html.title',
         'html.search',
         'html.search',
         'html.filters',
