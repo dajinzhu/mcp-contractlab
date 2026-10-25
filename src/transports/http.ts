@@ -1,3 +1,4 @@
+import { message } from '../i18n/message.js';
 import { lookup } from 'node:dns/promises';
 import type { LookupAddress, LookupOptions } from 'node:dns';
 import ipaddr from 'ipaddr.js';
@@ -16,19 +17,16 @@ interface HttpDependencies {
   send?: (request: Request, addresses: LookupAddress[]) => Promise<Response>;
 }
 export function publicAddresses(addresses: LookupAddress[]): LookupAddress[] {
-  if (!addresses.length) throw new Failure(2, 'HTTP host has no addresses');
+  if (!addresses.length) throw new Failure(2, message('http.noAddresses'));
   return addresses.map(({ address }) => {
     let ip;
     try {
       ip = ipaddr.process(address);
     } catch {
-      throw new Failure(3, 'Invalid HTTP address');
+      throw new Failure(3, message('http.invalidAddress'));
     }
     if (ip.range() !== 'unicast')
-      throw new Failure(
-        3,
-        'HTTP private, local, reserved or metadata address blocked',
-      );
+      throw new Failure(3, message('http.privateAddress'));
     return { address: ip.toString(), family: ip.kind() === 'ipv4' ? 4 : 6 };
   });
 }
@@ -37,7 +35,7 @@ export function approvedEndpoint(endpoint: string, hosts: string[]): URL {
   try {
     url = new URL(endpoint);
   } catch {
-    throw new Failure(2, 'Invalid HTTP endpoint');
+    throw new Failure(2, message('http.invalidEndpoint'));
   }
   if (
     url.protocol !== 'https:' ||
@@ -47,10 +45,7 @@ export function approvedEndpoint(endpoint: string, hosts: string[]): URL {
     url.search ||
     !hosts.map((h) => h.toLowerCase()).includes(url.hostname.toLowerCase())
   )
-    throw new Failure(
-      3,
-      'HTTP requires an explicit allowed HTTPS endpoint without credentials, query or fragment',
-    );
+    throw new Failure(3, message('http.endpointPolicy'));
   return url;
 }
 
@@ -69,8 +64,7 @@ export async function guardedHttp(
   ]);
   let removeAbort = () => {};
   const cancelled = new Promise<never>((_, reject) => {
-    const stop = () =>
-      reject(new Failure(2, 'HTTP DNS lookup interrupted or timed out'));
+    const stop = () => reject(new Failure(2, message('http.dnsTimeout')));
     dnsSignal.addEventListener('abort', stop, { once: true });
     removeAbort = () => dnsSignal.removeEventListener('abort', stop);
     if (dnsSignal.aborted) stop();
@@ -92,10 +86,7 @@ export async function guardedHttp(
   let issue: Failure | undefined;
   const token = server.authEnv ? process.env[server.authEnv] : undefined;
   if (server.authEnv && (!token || /[\r\n]/.test(token)))
-    throw new Failure(
-      2,
-      'Explicit HTTP credential variable is missing or invalid',
-    );
+    throw new Failure(2, message('http.credentials'));
   if (token) registerSecrets([token]);
   // DNS is resolved and checked once; the connector can only dial these addresses.
   const agent = dependencies.send
@@ -131,16 +122,13 @@ export async function guardedHttp(
         request.url !== endpoint.href ||
         !['POST', 'GET', 'DELETE'].includes(request.method)
       )
-        throw new Failure(
-          3,
-          'HTTP request outside the explicitly authorized endpoint blocked',
-        );
+        throw new Failure(3, message('http.outsideEndpoint'));
       const headers = new Headers(request.headers);
       headers.delete('authorization');
       if (token) headers.set('authorization', `Bearer ${token}`);
       const body = request.body ? await request.arrayBuffer() : undefined;
       if (body && body.byteLength > 1024 * 1024)
-        throw new Failure(2, 'HTTP request exceeds 1 MiB');
+        throw new Failure(2, message('http.requestLarge'));
       const safeRequest = new Request(endpoint, {
         method: request.method,
         headers,
@@ -159,7 +147,7 @@ export async function guardedHttp(
           })) as unknown as Response);
       if (response.status >= 300 && response.status < 400) {
         void response.body?.cancel();
-        throw new Failure(3, 'HTTP redirect blocked');
+        throw new Failure(3, message('http.redirect'));
       }
       if (!response.body)
         return new Response(null, {
@@ -184,13 +172,13 @@ export async function guardedHttp(
             bytes += next.value.byteLength;
             total += next.value.byteLength;
             if (bytes > 64 * 1024 || total > 2 * 1024 * 1024)
-              throw new Failure(2, 'HTTP response budget exceeded');
+              throw new Failure(2, message('http.responseLarge'));
             controller.enqueue(next.value);
           } catch (error) {
             issue =
               error instanceof Failure
                 ? error
-                : new Failure(2, 'HTTP response stream failed');
+                : new Failure(2, message('http.streamFailed'));
             safeRequest.signal.removeEventListener('abort', cancel);
             cancel();
             controller.error(issue);
@@ -209,7 +197,7 @@ export async function guardedHttp(
       issue =
         error instanceof Failure
           ? error
-          : new Failure(2, 'HTTP request failed');
+          : new Failure(2, message('http.requestFailed'));
       throw issue;
     }
   };
@@ -278,15 +266,14 @@ export async function withHttpSession<T>(
     });
     const result = await body(client, combined);
     if (gate.issue()) throw gate.issue();
-    if (combined.aborted)
-      throw new Failure(2, 'HTTP session interrupted or timed out');
+    if (combined.aborted) throw new Failure(2, message('http.sessionTimeout'));
     return result;
   } catch (error) {
     throw (
       gate?.issue() ??
       (error instanceof Failure
         ? error
-        : new Failure(2, 'HTTP protocol, timeout or transport failure'))
+        : new Failure(2, message('http.failed')))
     );
   } finally {
     clearTimeout(timer);

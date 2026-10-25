@@ -1,10 +1,12 @@
+import { english, rememberText, type Text } from './i18n/message.js';
 export type ExitCode = 0 | 1 | 2 | 3;
 export class Failure extends Error {
   constructor(
     public readonly code: ExitCode,
-    message: string,
+    message: Text,
   ) {
-    super(message);
+    super(english(message));
+    rememberText(this, message);
   }
 }
 export interface Assertion {

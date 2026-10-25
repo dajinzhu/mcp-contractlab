@@ -1,3 +1,4 @@
+import { message } from '../i18n/message.js';
 import { setTimeout as delay } from 'node:timers/promises';
 import { Client } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
@@ -17,10 +18,7 @@ class BoundedStdio extends StdioClientTransport {
     const env: Record<string, string> = {};
     for (const key of server.env) {
       if (process.env[key] === undefined)
-        throw new Failure(
-          2,
-          'An explicitly allowed environment variable is missing',
-        );
+        throw new Failure(2, message('env.missing'));
       env[key] = process.env[key];
     }
     registerSecrets(
@@ -70,11 +68,11 @@ async function ensureExited(pid: number | null): Promise<void> {
       process.kill(pid, 0);
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === 'ESRCH') return;
-      throw new Failure(2, 'Cannot confirm server cleanup');
+      throw new Failure(2, message('server.cleanupUnknown'));
     }
     await delay(20);
   }
-  throw new Failure(2, 'Server did not exit after cleanup');
+  throw new Failure(2, message('server.cleanupFailed'));
 }
 
 export async function withSession<T>(
@@ -125,8 +123,8 @@ export async function withSession<T>(
     throw new Failure(
       2,
       controller.signal.aborted
-        ? 'Server interrupted or output/time budget exceeded'
-        : 'Server launch, timeout, protocol or transport failure',
+        ? message('server.interrupted')
+        : message('server.failed'),
     );
   } finally {
     clearTimeout(deadline);

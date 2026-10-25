@@ -1,3 +1,4 @@
+import { message } from '../i18n/message.js';
 import { open } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { LineCounter, parseDocument } from 'yaml';
@@ -94,7 +95,7 @@ const schema = z.strictObject({
 
 export function parseConfig(source: string, filename: string): Config {
   if (Buffer.byteLength(source) > 1024 * 1024)
-    throw new Failure(2, 'Config exceeds 1 MiB');
+    throw new Failure(2, message('config.large'));
   const lineCounter = new LineCounter();
   const doc = parseDocument(source, {
     lineCounter,
@@ -104,28 +105,25 @@ export function parseConfig(source: string, filename: string): Config {
   if (doc.errors.length || doc.warnings.length) {
     const issue = doc.errors[0] ?? doc.warnings[0];
     const location = issue?.pos ? lineCounter.linePos(issue.pos[0]) : undefined;
-    throw new Failure(
-      2,
-      `Invalid YAML${location ? ` at ${location.line}:${location.col}` : ''}`,
-    );
+    throw new Failure(2, message('config.yaml', location?.line, location?.col));
   }
   let data: unknown;
   try {
     data = doc.toJS({ maxAliasCount: 0 });
   } catch {
-    throw new Failure(2, 'YAML aliases are not supported');
+    throw new Failure(2, message('config.aliases'));
   }
   const parsed = schema.safeParse(data);
   if (!parsed.success) {
     const i = parsed.error.issues[0];
     throw new Failure(
       2,
-      `Invalid config at /${i?.path.map(String).join('/')}: ${i?.code}`,
+      message('config.invalid', i?.path.map(String).join('/') ?? '', i?.code),
     );
   }
   const config = parsed.data;
   if (new Set(config.cases.map((c) => c.id)).size !== config.cases.length)
-    throw new Failure(2, 'Case IDs must be unique');
+    throw new Failure(2, message('config.duplicateIds'));
   const cases = config.cases.flatMap((c) =>
     'rows' in c
       ? c.rows.map((row) => ({ ...row, id: `${c.id}/${row.id}`, tool: c.tool }))
@@ -135,10 +133,7 @@ export function parseConfig(source: string, filename: string): Config {
     cases.length > 1000 ||
     new Set(cases.map((c) => c.id)).size !== cases.length
   )
-    throw new Failure(
-      2,
-      'Expanded case IDs must be unique and count at most 1000',
-    );
+    throw new Failure(2, message('config.expandedIds'));
   if (config.server.transport === 'stdio')
     config.server.cwd = resolve(dirname(resolve(filename)), config.server.cwd);
   return { ...config, cases };
@@ -161,14 +156,14 @@ export async function loadConfig(filename: string): Promise<Config> {
         if (!bytesRead) break;
         offset += bytesRead;
       }
-      if (offset > 1024 * 1024) throw new Failure(2, 'Config exceeds 1 MiB');
+      if (offset > 1024 * 1024) throw new Failure(2, message('config.large'));
       source = buffer.subarray(0, offset).toString('utf8');
     } finally {
       await file.close();
     }
   } catch (error) {
     if (error instanceof Failure) throw error;
-    throw new Failure(2, 'Cannot read config file');
+    throw new Failure(2, message('config.readFailed'));
   }
   return parseConfig(source, filename);
 }

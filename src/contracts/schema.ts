@@ -1,8 +1,13 @@
+import { message, english, type Text } from '../i18n/message.js';
 import { Worker } from 'node:worker_threads';
 
 export interface SchemaCheck {
   valid: boolean;
   diagnostic: string;
+  presentation?: Text;
+}
+export function schemaFailure(text: Text): SchemaCheck {
+  return { valid: false, diagnostic: english(text), presentation: text };
 }
 
 /** Isolate untrusted schema regexes and recursive validation with a hard deadline. */
@@ -21,20 +26,13 @@ export function checkSchema(
       resolve(result);
     };
     const timer = setTimeout(
-      () =>
-        finish({
-          valid: false,
-          diagnostic: 'Schema validation exceeded 2 seconds',
-        }),
+      () => finish(schemaFailure(message('schema.timeout'))),
       2000,
     );
     worker.once('message', (result: SchemaCheck) => finish(result));
-    worker.once('error', () =>
-      finish({ valid: false, diagnostic: 'Schema validation failed safely' }),
-    );
+    worker.once('error', () => finish(schemaFailure(message('schema.failed'))));
     worker.once('exit', (code) => {
-      if (code !== 0)
-        finish({ valid: false, diagnostic: 'Schema worker terminated' });
+      if (code !== 0) finish(schemaFailure(message('schema.terminated')));
     });
   });
 }
