@@ -1,5 +1,9 @@
 # Beta release preparation
 
+For the fresh Phase 6 audit, candidate/consumer workflow and explicit NO-GO gates,
+see [release readiness](releases/README.md). The older observations below are dated
+historical context, not a namespace reservation or current publication approval.
+
 The prepared version is **0.1.0-beta.1**. `private: true` intentionally prevents npm
 publication. No package, Git tag or GitHub release is published by this workflow.
 Confirm the package name, version, publishing identity and trusted-publishing/2FA

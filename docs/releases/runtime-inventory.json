@@ -1,0 +1,305 @@
+{
+  "scope": "npm ls --omit=dev --all; dependency declarations are not legal conclusions",
+  "lockfileSha256": "fda66d89e21cbc01d6b6f8f4aeb08694cded4f8db7db5c47eba011eac4fb1288",
+  "packages": [
+    {
+      "name": "@modelcontextprotocol/client",
+      "version": "2.4.0",
+      "declaredLicense": "Apache-2.0",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a.txt",
+          "sha256": "0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a"
+        }
+      ]
+    },
+    {
+      "name": "@modelcontextprotocol/core",
+      "version": "2.4.0",
+      "declaredLicense": "Apache-2.0",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a.txt",
+          "sha256": "0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a"
+        }
+      ]
+    },
+    {
+      "name": "@modelcontextprotocol/server",
+      "version": "2.4.0",
+      "declaredLicense": "Apache-2.0",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a.txt",
+          "sha256": "0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a"
+        }
+      ]
+    },
+    {
+      "name": "ajv",
+      "version": "8.20.0",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/a05350a88e318e4f5f2c2a1ff1e2e88daa4dd38e6e78b71cccae422bdc762cc3.txt",
+          "sha256": "a05350a88e318e4f5f2c2a1ff1e2e88daa4dd38e6e78b71cccae422bdc762cc3"
+        }
+      ]
+    },
+    {
+      "name": "commander",
+      "version": "15.0.0",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/04512a63dce4d2d506ad612dc0bd7681ccf6e3655f7b6eaef7dfac8323d1ec0b.txt",
+          "sha256": "04512a63dce4d2d506ad612dc0bd7681ccf6e3655f7b6eaef7dfac8323d1ec0b"
+        }
+      ]
+    },
+    {
+      "name": "cross-spawn",
+      "version": "7.0.6",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/aaa78451b6fecd1b9c4594c796c133c0e90cad100372ff8bc6de615e9ef9adf1.txt",
+          "sha256": "aaa78451b6fecd1b9c4594c796c133c0e90cad100372ff8bc6de615e9ef9adf1"
+        }
+      ]
+    },
+    {
+      "name": "eventsource",
+      "version": "3.0.7",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/f683a72ffe6a9675b5507af22fe0f448d8c8de3da1e14f139d370a7e6a54a23e.txt",
+          "sha256": "f683a72ffe6a9675b5507af22fe0f448d8c8de3da1e14f139d370a7e6a54a23e"
+        }
+      ]
+    },
+    {
+      "name": "eventsource-parser",
+      "version": "3.1.1",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/835eb611a23301b27115ca1be9f754c876e643ceb7fe63049c6b50609a1cafeb.txt",
+          "sha256": "835eb611a23301b27115ca1be9f754c876e643ceb7fe63049c6b50609a1cafeb"
+        }
+      ]
+    },
+    {
+      "name": "fast-deep-equal",
+      "version": "3.1.3",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/7bf9b2de73a6b356761c948d0e9eeb4be6c1270bd04c79cd489c1e400ffdfc1a.txt",
+          "sha256": "7bf9b2de73a6b356761c948d0e9eeb4be6c1270bd04c79cd489c1e400ffdfc1a"
+        }
+      ]
+    },
+    {
+      "name": "fast-uri",
+      "version": "3.1.9",
+      "declaredLicense": "BSD-3-Clause",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/b010b0dfdfdb23d7396e03b82cd4621fc9bb8f95d6b0aea70b9c24e12074c786.txt",
+          "sha256": "b010b0dfdfdb23d7396e03b82cd4621fc9bb8f95d6b0aea70b9c24e12074c786"
+        }
+      ]
+    },
+    {
+      "name": "ipaddr.js",
+      "version": "2.5.0",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/62568a2d1337b77171ecca9db10579163446de1ba6151678e81f06cdc199971b.txt",
+          "sha256": "62568a2d1337b77171ecca9db10579163446de1ba6151678e81f06cdc199971b"
+        }
+      ]
+    },
+    {
+      "name": "isexe",
+      "version": "2.0.0",
+      "declaredLicense": "ISC",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b.txt",
+          "sha256": "4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b"
+        }
+      ]
+    },
+    {
+      "name": "jose",
+      "version": "6.2.13",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE.md",
+          "path": "third-party-licenses/8078b0829d6c3e9ecde2f003e1966e4cad3efc6e7a640efbab0313cc166b1af1.txt",
+          "sha256": "8078b0829d6c3e9ecde2f003e1966e4cad3efc6e7a640efbab0313cc166b1af1"
+        }
+      ]
+    },
+    {
+      "name": "json-schema-traverse",
+      "version": "1.0.0",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/7bf9b2de73a6b356761c948d0e9eeb4be6c1270bd04c79cd489c1e400ffdfc1a.txt",
+          "sha256": "7bf9b2de73a6b356761c948d0e9eeb4be6c1270bd04c79cd489c1e400ffdfc1a"
+        }
+      ]
+    },
+    {
+      "name": "path-key",
+      "version": "3.1.1",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "license",
+          "path": "third-party-licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0"
+        }
+      ]
+    },
+    {
+      "name": "pkce-challenge",
+      "version": "5.0.1",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/feb87a2e0c305de3464cc44077da5393c52d8ca6362d37427157d04ec6f4510d.txt",
+          "sha256": "feb87a2e0c305de3464cc44077da5393c52d8ca6362d37427157d04ec6f4510d"
+        }
+      ]
+    },
+    {
+      "name": "require-from-string",
+      "version": "2.0.2",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "license",
+          "path": "third-party-licenses/6ee0feb1f6ef996ff5a68600f8cf98909cf412d39ef3cdceaefd87d636fa1b7f.txt",
+          "sha256": "6ee0feb1f6ef996ff5a68600f8cf98909cf412d39ef3cdceaefd87d636fa1b7f"
+        }
+      ]
+    },
+    {
+      "name": "shebang-command",
+      "version": "2.0.0",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "license",
+          "path": "third-party-licenses/69dee148a2cc470554dfa7142e830662062394d0fe67cddd379aba90dc60d6b3.txt",
+          "sha256": "69dee148a2cc470554dfa7142e830662062394d0fe67cddd379aba90dc60d6b3"
+        }
+      ]
+    },
+    {
+      "name": "shebang-regex",
+      "version": "3.0.0",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "license",
+          "path": "third-party-licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0"
+        }
+      ]
+    },
+    {
+      "name": "undici",
+      "version": "7.30.1",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/a6db8096b2707bc0102d256917d4d33f298ba36d8c3f25de067a2b5bb379db27.txt",
+          "sha256": "a6db8096b2707bc0102d256917d4d33f298ba36d8c3f25de067a2b5bb379db27"
+        }
+      ]
+    },
+    {
+      "name": "which",
+      "version": "2.0.2",
+      "declaredLicense": "ISC",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b.txt",
+          "sha256": "4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b"
+        }
+      ]
+    },
+    {
+      "name": "yaml",
+      "version": "2.9.1",
+      "declaredLicense": "ISC",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/5bba27375d93e9119f76c1015f7672cf9ad5f70952296e0842fb2243d6376869.txt",
+          "sha256": "5bba27375d93e9119f76c1015f7672cf9ad5f70952296e0842fb2243d6376869"
+        }
+      ]
+    },
+    {
+      "name": "zod",
+      "version": "4.6.7",
+      "declaredLicense": "MIT",
+      "installHooks": [],
+      "notices": [
+        {
+          "sourceFile": "LICENSE",
+          "path": "third-party-licenses/3f1189b28e3866e0d979968d466b78f813f76827cfdca1fbb124cc0a5c8841f8.txt",
+          "sha256": "3f1189b28e3866e0d979968d466b78f813f76827cfdca1fbb124cc0a5c8841f8"
+        }
+      ]
+    }
+  ]
+}

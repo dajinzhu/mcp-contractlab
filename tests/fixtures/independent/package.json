@@ -6,6 +6,7 @@
     "node": ">=24"
   },
   "dependencies": {
-    "@modelcontextprotocol/server-everything": "2.0.0"
+    "@modelcontextprotocol/server-everything": "2.0.0",
+    "@modelcontextprotocol/server-filesystem": "2.0.1"
   }
 }
