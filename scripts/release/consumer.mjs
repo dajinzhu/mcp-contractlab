@@ -175,6 +175,22 @@ export async function verifyConsumer(tarball, outputDirectory) {
       assert(help.includes('--lang'));
       if (lang === 'zh-CN') assert(/[\u4e00-\u9fff]/.test(help));
     }
+    for (const lang of ['en', 'zh-CN']) {
+      const target = join(directory, `init-${lang}.yaml`);
+      await run(binary, ['init', '--output', target, '--lang', lang]);
+      const template = await readFile(target, 'utf8');
+      assert(template.includes('allowToolCalls: []'));
+      assert(template.includes('maxToolCalls: 0'));
+      assert(template.includes('cases: []'));
+      if (lang === 'zh-CN') assert(/[\u4e00-\u9fff]/.test(template));
+      await run(binary, ['init', '--output', target, '--lang', lang], 2);
+      await run(binary, ['test', '-c', target, '--allow-exec'], 2);
+    }
+    assert(
+      (
+        await readFile(join(installed, 'docs', 'first-run.md'), 'utf8')
+      ).includes('mcpcl init'),
+    );
     const config = join(installed, 'examples/mcpcl.config.yaml');
     const invoke = (args, code = 0) =>
       run(process.execPath, [cli, ...args], code);

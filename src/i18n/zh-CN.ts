@@ -67,6 +67,12 @@ export const zhCN = {
   'diff.type': () => '根输入类型不再接受此前允许的类型',
   'diff.unknown': () => 'schema 兼容性尚未证明',
   'snapshot.success': () => '已显式写入快照；未调用任何工具。',
+  'init.writeFailed': () =>
+    '无法创建配置：请在已存在且无路径别名的目录中使用新文件名。',
+  'help.init': () => '创建不执行操作的配置模板',
+  'help.initOutput': () => '新配置文件名（必填）',
+  'init.next': () =>
+    '编辑占位符并审查权限与副作用。然后使用显式传输授权运行 mcpcl inspect -c <config>。添加无害用例和白名单后，使用显式授权运行 mcpcl test -c <config>。',
   'cli.invalid': () => '调用无效，或操作已安全终止',
   'cli.description': () => '显式的 MCP 工具行为契约',
   'help.config': () => 'YAML 配置文件',

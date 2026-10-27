@@ -24,4 +24,7 @@
 - Release-candidate packaging, runtime license attribution, clean consumer matrix
   and independent read-only filesystem validation; publication remains gated.
 
+- Explicit `init` generates a bilingual inert configuration at a new path, with
+  no tool permissions or executable cases.
+
 No npm release or Git tag has been published. Production readiness is not claimed.

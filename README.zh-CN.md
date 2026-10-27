@@ -21,6 +21,16 @@
 **MCP 2026-07-28**。需要 Node.js **>=22.13.0**，CI 测试 Node **22 和 24**；
 旧协议版本未验证。不需要 LLM 密钥、GPU、数据库或账号。
 
+## 创建自己的配置
+
+从源码构建后，使用新文件名创建不执行操作的模板：
+
+```sh
+npm run cli -- init --output mcpcl.config.yaml --lang zh-CN
+```
+
+编辑服务器占位符，审查进程和工具权限；确认命令安全后，使用 `npm run cli -- inspect -c mcpcl.config.yaml --allow-exec` 检查测试服务器。检查会启动配置的进程，但不会调用工具。添加经过审查的无害用例、对应白名单项和足够的调用预算，再运行 `npm run cli -- test -c mcpcl.config.yaml --allow-exec`。未编辑的模板没有用例，测试不会通过。使用 HTTPS 时请审查端点并使用单独的 HTTP 授权。详见[首次运行说明](docs/first-run.md)。
+
 ## 从源码快速开始
 
 ```sh
