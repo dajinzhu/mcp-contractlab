@@ -82,6 +82,12 @@ export const en = {
   'diff.type': () => 'Root input type rejects previously allowed types',
   'diff.unknown': () => 'Schema compatibility not proven',
   'snapshot.success': () => 'Snapshot written explicitly; no tools called.',
+  'init.writeFailed': () =>
+    'Cannot create config: use a new filename in an existing non-aliased directory.',
+  'help.init': () => 'Create an inert configuration template',
+  'help.initOutput': () => 'New configuration filename (required)',
+  'init.next': () =>
+    'Edit the placeholders; review permissions and side effects. Then run mcpcl inspect -c <config> with explicit transport consent. Add a harmless case and allowlist entry before mcpcl test -c <config> with explicit consent.',
   'cli.invalid': () => 'Invalid invocation or operation failed safely',
   'cli.description': () => 'Explicit MCP tool behavior contracts',
   'help.config': () => 'YAML configuration',

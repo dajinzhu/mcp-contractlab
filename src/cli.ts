@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command, CommanderError } from 'commander';
 import { loadConfig } from './config/load.js';
+import { writeInit } from './config/init.js';
 import { Failure, type Config } from './types.js';
 import { withSession } from './transports/stdio.js';
 import { discover, runSuite } from './runner/run-suite.js';
@@ -44,6 +45,14 @@ const program = new Command()
   .option('--lang <locale>', t(locale, 'help.language'))
   .helpCommand('help [command]', t(locale, 'help.command'))
   .exitOverride();
+program
+  .command('init')
+  .description(t(locale, 'help.init'))
+  .requiredOption('--output <path>', t(locale, 'help.initOutput'))
+  .action(async (options: { output: string }) => {
+    await writeInit(options.output, locale);
+    process.stdout.write(plain(t(locale, 'init.next')) + '\n');
+  });
 for (const name of ['inspect', 'test'] as const) {
   program
     .command(name)

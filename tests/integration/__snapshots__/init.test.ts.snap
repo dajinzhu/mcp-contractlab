@@ -1,0 +1,45 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`creates a deterministic inert en template 1`] = `
+"# MCP ContractLab configuration template (version 1). Review and edit first.
+schemaVersion: 1
+server:
+  # Replace the placeholders below with your own test server.
+  name: "EDIT_SERVER_NAME"
+  transport: stdio
+  command: "EDIT_SERVER_COMMAND"
+  args: [] # EDIT: server arguments
+  cwd: "."
+  timeoutMs: 10000
+  # Starting a process separately requires --allow-exec; this file grants no consent.
+safety:
+  # Tool calls require explicit cases and an allowlist; both start empty.
+  allowToolCalls: []
+  maxToolCalls: 0
+  toolTimeoutMs: 5000
+  # Review tool permissions and side effects before adding a harmless case.
+cases: []
+"
+`;
+
+exports[`creates a deterministic inert zh-CN template 1`] = `
+"# MCP ContractLab 配置模板（版本 1）。请先审查并编辑。
+schemaVersion: 1
+server:
+  # 替换下面的占位符，指向您自己的测试服务器。
+  name: "EDIT_SERVER_NAME"
+  transport: stdio
+  command: "EDIT_SERVER_COMMAND"
+  args: [] # 编辑：服务器参数
+  cwd: "."
+  timeoutMs: 10000
+  # 启动进程需要单独提供 --allow-exec；此文件不授权执行。
+safety:
+  # 工具调用需要明确的用例和白名单；默认均为空。
+  allowToolCalls: []
+  maxToolCalls: 0
+  toolTimeoutMs: 5000
+  # 添加无害用例前，请先审查工具的权限和副作用。
+cases: []
+"
+`;

@@ -14,19 +14,11 @@ own server. Installing a private candidate is less obvious than a published CLI.
 No external users have reported friction to us; this is an engineering observation,
 not fabricated user research.
 
-## Recommended separate follow-up PR
+## Safe first-run template
 
-A small `mcpcl init` or `mcpcl config template` workflow would help. **Not implemented
-or advertised as available now.** Proposed requirements:
-
-- Write only to an explicit new path; refuse file/alias overwrite.
-- Do not launch processes, discover endpoints, infer tool permission or call tools.
-- Generate an inert versioned template with empty allowlist and explicit edit steps.
-- Preserve consent gates; do not add --allow-exec or --allow-http automatically.
-- Support typed EN/ZH guidance, deterministic template output and regression tests.
-- Avoid hidden accounts, environment capture, package installation or network calls.
-
-Review CLI naming and template usability separately to keep release audit scope small.
+`mcpcl init --output mcpcl.config.yaml` now creates an inert versioned template.
+See [first-run instructions](../first-run.md). The generated template deliberately
+contains no executable cases or tool permissions; user review remains necessary.
 
 ## After an actually approved and verified public beta
 

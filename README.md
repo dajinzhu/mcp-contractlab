@@ -21,6 +21,16 @@ installation. Not production-ready. Targets **MCP 2026-07-28** with the official
 split TypeScript SDK **2.4.0**. Node.js **>=22.13.0**, tested on Node **22 and 24**;
 older protocol revisions are not verified. No LLM key, GPU, database or account.
 
+## Create your own configuration
+
+After building from source, create an inert template at a new filename:
+
+```sh
+npm run cli -- init --output mcpcl.config.yaml --lang en
+```
+
+Edit the server placeholders, review process and tool permissions, and inspect your test server with `npm run cli -- inspect -c mcpcl.config.yaml --allow-exec` only after reviewing the command. Inspection starts the configured process but does not call tools. Add a reviewed harmless case, the matching allowlist entry and a sufficient call budget, then run `npm run cli -- test -c mcpcl.config.yaml --allow-exec`. The unedited template has no cases and cannot pass a test run. For HTTPS, review the endpoint and use the separate HTTP consent instead. See [first-run instructions](docs/first-run.md).
+
 ## Quick start from source
 
 ```sh
